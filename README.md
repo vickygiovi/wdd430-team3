@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started
@@ -34,3 +35,14 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+=======
+# wdd430-team3
+A Next.js Full-Stack App for WDD 430
+
+- Giovanni Adrian Canavesi Calcagno
+- Emeribe Stanley Ameiz Chibuike
+- Jared Gerard Morillo
+- Dagbame Franck Zagadou
+- Blaine Castillo Villanueva
+
+>>>>>>> a52987c3bb06e94c75258b3dfc3f17d9e80fc6a0
