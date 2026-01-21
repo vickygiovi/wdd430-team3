@@ -1,0 +1,261 @@
+/* COLOR SCHEMA */
+
+/* Primary: #F5F2ED
+Secondary: #2D2926
+Accent 1: #C05C3E
+Accent 2: #828A78
+Accent 3: #D4A351 */
+
+/* TYPOGRAPHY */
+
+/* Main Headings: Lora, 700 (Bold)
+Sub-headings: Montserrat, 600 (Semi-Bold)
+Body Text: Montserrat, 400 (Regular)
+Price/Buttons: Montserrat, 700 (Bold) */
+
+/* =========================
+   RESET & BASE
+========================= */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --bg-dark: #2f2b28;
+  --bg-light: #f3f2f0;
+  --bg-muted: #8b917f;
+  --card-bg: #d6a657;
+
+  --text-dark: #1f1f1f;
+  --text-light: #ffffff;
+  --text-muted: #bdbdbd;
+
+  --primary: #c86a3a;
+  --secondary: #9aa184;
+
+  --radius: 6px;
+  --max-width: 1200px;
+}
+
+body {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  color: var(--text-dark);
+  background-color: var(--bg-light);
+  line-height: 1.5;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+/* =========================
+   NAVBAR
+========================= */
+header {
+  background: #efece7;
+  border-bottom: 1px solid #ddd;
+}
+
+.navbar {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0.75rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.navbar ul {
+  display: flex;
+  gap: 1.5rem;
+  list-style: none;
+}
+
+.navbar a {
+  text-decoration: none;
+  color: var(--text-dark);
+  font-size: 0.9rem;
+}
+
+.nav-actions {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.btn {
+  padding: 0.4rem 0.8rem;
+  border-radius: var(--radius);
+  font-size: 0.85rem;
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+
+.btn-outline {
+  background: transparent;
+  border-color: #aaa;
+}
+
+.btn-solid {
+  background: #000;
+  color: #fff;
+}
+
+/* =========================
+   HERO
+========================= */
+.hero {
+  background: var(--bg-dark);
+  color: var(--text-light);
+  text-align: center;
+  padding: 6rem 1.5rem;
+}
+
+.hero h1 {
+  font-size: 3rem;
+  margin-bottom: 0.5rem;
+}
+
+.hero p {
+  color: var(--text-muted);
+  margin-bottom: 1.5rem;
+}
+
+.hero-actions {
+  display: inline-flex;
+  gap: 0.75rem;
+}
+
+.hero .btn-primary {
+  background: var(--primary);
+  color: #fff;
+}
+
+.hero .btn-secondary {
+  background: var(--secondary);
+  color: #fff;
+}
+
+/* =========================
+   IMAGE / FEATURE SECTION
+========================= */
+.feature {
+  background: #e6e6e6;
+  padding: 6rem 1.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.feature-placeholder {
+  width: 300px;
+  height: 200px;
+  background: #d0d0d0;
+  border-radius: var(--radius);
+}
+
+/* =========================
+   TESTIMONIALS
+========================= */
+.testimonials {
+  background: var(--bg-muted);
+  padding: 4rem 1.5rem;
+}
+
+.testimonials-header {
+  max-width: var(--max-width);
+  margin: 0 auto 2rem;
+}
+
+.testimonials-header h2 {
+  font-size: 1.8rem;
+  color: #fff;
+}
+
+.testimonials-header p {
+  color: #e2e2e2;
+}
+
+.testimonial-grid {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.5rem;
+}
+
+.testimonial-card {
+  background: var(--card-bg);
+  padding: 1.25rem;
+  border-radius: var(--radius);
+  color: #2b2b2b;
+}
+
+.testimonial-card blockquote {
+  font-style: italic;
+  margin-bottom: 1rem;
+}
+
+.testimonial-user {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #555;
+}
+
+.user-info small {
+  display: block;
+  font-size: 0.75rem;
+  opacity: 0.8;
+}
+
+/* =========================
+   FOOTER
+========================= */
+footer {
+  background: #efece7;
+  padding: 3rem 1.5rem;
+}
+
+.footer-container {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 2rem;
+}
+
+.footer-column h4 {
+  font-size: 0.9rem;
+  margin-bottom: 0.75rem;
+}
+
+.footer-column ul {
+  list-style: none;
+}
+
+.footer-column li {
+  margin-bottom: 0.4rem;
+}
+
+.footer-column a {
+  text-decoration: none;
+  color: #333;
+  font-size: 0.85rem;
+}
+
+.footer-social {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
