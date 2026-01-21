@@ -5,3 +5,5 @@ A Next.js Full-Stack App for WDD 430
 - Emeribe Stanley Ameiz Chibuike
 - Jared Gerard Morillo
 - Dagbame Franck Zagadou
+- Blaine Castillo Villanueva
+
