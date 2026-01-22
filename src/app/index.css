@@ -54,6 +54,40 @@ img {
 }
 
 /* =========================
+   HEADER BUTTONS
+========================= */
+
+/* Botones específicos para el Seller en el Nav */
+
+.btn-stories {
+  background-color: #C05C3E; /* Accent 1 */
+  color: #ffffff;
+  border: none;
+  font-weight: 700; /* Según tu tipografía para botones */
+}
+
+.btn-profile {
+  background-color: #828A78; /* Accent 2 */
+  color: #ffffff;
+  border: none;
+  font-weight: 700;
+}
+
+.btn-products {
+  background-color: #D4A351; /* Accent 3 */
+  color: #2D2926; /* Secondary (Dark text) para mejor contraste */
+  border: none;
+  font-weight: 700;
+}
+
+/* Efecto Hover para mantener la consistencia */
+.btn-stories:hover, .btn-profile:hover, .btn-products:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+  transition: all 0.2s ease;
+}
+
+/* =========================
    NAVBAR
 ========================= */
 header {
@@ -158,6 +192,45 @@ header {
   border-radius: var(--radius);
 }
 
+.feature {
+  background-color: #F5F2ED; /* Color Primary del schema */
+  padding: 80px 1.5rem;
+}
+
+.feature-grid {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 3rem;
+  text-align: center;
+}
+
+.feature-item h3 {
+  color: var(--bg-dark);
+  margin: 1rem 0;
+  font-size: 1.5rem;
+}
+
+.feature-item p {
+  color: #555;
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.feature-icon {
+  font-size: 2.5rem;
+  display: block;
+  margin-bottom: 0.5rem;
+  /* Opcional: usar Accent 1 para un círculo de fondo suave */
+  background: #C05C3E22; 
+  width: 80px;
+  height: 80px;
+  line-height: 80px;
+  border-radius: 50%;
+  margin: 0 auto;
+}
+
 /* =========================
    TESTIMONIALS
 ========================= */
@@ -193,6 +266,7 @@ header {
   padding: 1.25rem;
   border-radius: var(--radius);
   color: #2b2b2b;
+  
 }
 
 .testimonial-card blockquote {
