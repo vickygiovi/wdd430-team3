@@ -68,31 +68,7 @@ const testimonialData = [
 export default function Home() {
   return (
      <>
-      {/* =========================
-          HEADER / NAVBAR
-      ========================== */}
-      <header>
-        <nav className="navbar">
-          <div className="logo">
-            <Image src="/logo2.png" alt="Logo" width={50} height={50} />
-          </div>
-
-          <ul>
-            <li><a href="#">Browse Catalog</a></li>
-            <li><a href="#">My Ratings</a></li>
-            <li><a href="#">My Written Reviews</a></li>
-            <li><a href="#">Contact</a></li>
-          </ul>
-
-          <div className="nav-actions">
-            <button className="btn btn-outline">Sign in</button>
-            <button className="btn btn-solid">Register</button>
-            <button className="btn btn-profile">My Profile</button>
-            <button className="btn btn-stories">My Stories</button>
-            <button className="btn btn-products">My Products</button>
-          </div>
-        </nav>
-      </header>
+      
 
       {/* =========================
           HERO
@@ -156,62 +132,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* =========================
-          FOOTER
-      ========================== */}
-      <footer>
-        <div className="footer-container">
-          <div>
-            <div className="logo">
-              <Image src="/logo2.png" alt="Logo" width={50} height={50} />
-            </div>
-            <div className="footer-social">
-              <a href="#" aria-label="Twitter">
-                <Twitter size={20} strokeWidth={1.5} />
-              </a>
-              <a href="#" aria-label="Instagram">
-                <Instagram size={20} strokeWidth={1.5} />
-              </a>
-              <a href="#" aria-label="YouTube">
-                <Youtube size={20} strokeWidth={1.5} />
-              </a>
-              <a href="#" aria-label="LinkedIn">
-                <Linkedin size={20} strokeWidth={1.5} />
-              </a>
-            </div>
-          </div>
-
-          <div className="footer-column">
-            <h4>Artisans</h4>
-            <ul>
-              <li><a href="#">View Profile</a></li>
-              <li><a href="#">Modify Profile</a></li>
-              <li><a href="#">Publish a Crafting</a></li>
-              <li><a href="#">Tell a Story</a></li>
-            </ul>
-          </div>
-
-          <div className="footer-column">
-            <h4>Users</h4>
-            <ul>
-              <li><a href="#">Start Browsing</a></li>
-              <li><a href="#">Filtering</a></li>
-              <li><a href="#">Ratings</a></li>
-              <li><a href="#">User Reviews</a></li>
-            </ul>
-          </div>
-
-          <div className="footer-column">
-            <h4>About Us</h4>
-            <ul>
-              <li><a href="#">About Us</a></li>
-              <li><a href="#">Our Mission</a></li>
-              <li><a href="#">Blog</a></li>
-              <li><a href="#">Contact Us</a></li>
-            </ul>
-          </div>
-        </div>
-      </footer>
+      
     </>    
   );
 }
