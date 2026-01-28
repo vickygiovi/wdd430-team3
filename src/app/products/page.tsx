@@ -1,6 +1,8 @@
 /* import Navbar from "../navigation/navbar"; */
 import Sidebar from "../navigation/sidebar";
 import Card from "../navigation/card";
+import "./products.css";
+import "../index.css";
 /* import Footer from "../navigation/footer"; */
 
 export default function ProductsPage() {

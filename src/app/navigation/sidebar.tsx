@@ -1,4 +1,4 @@
-const sidebar: React.FC = () => {
+const Sidebar: React.FC = () => {
   return (
     <aside className="sidebar">
       <h4>Keywords</h4>
@@ -43,4 +43,4 @@ const sidebar: React.FC = () => {
   );
 };
 
-export default sidebar;
+export default Sidebar;

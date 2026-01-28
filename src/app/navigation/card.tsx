@@ -1,11 +1,11 @@
-const card: React.FC = () => {
+const Card: React.FC = () => {
   return (
-    <div className="card">
-      <div className="img" />
+    <div className="card1">
+      <div className="img1" />
       <p>Text</p>
       <strong>$0</strong>
     </div>
   );
 };
 
-export default card;
+export default Card;
