@@ -111,15 +111,48 @@ body {
   padding: 10px;
 }
 
-.card1-img1 {
-  background: #eee;
+.card1-img {
+  background: #f2f2f2;
   height: 170px;
-  border-radius: 6px;
+  border-radius: 8px;
+  margin-bottom: 10px;
 }
 
 .card1-body {
-  margin-top: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 14px;
+}
+
+/* ===== TOOLBAR ===== */
+.products-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.search {
+  background: #333;
+  color: white;
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-size: 14px;
+}
+
+.filters button {
+  margin-left: 8px;
+  padding: 6px 14px;
+  border-radius: 20px;
+  border: none;
+  background: #444;
+  color: white;
   font-size: 13px;
+}
+
+.filters button.active {
+  background: #e85b2a;
 }
 
 /* ===== FOOTER ===== */
