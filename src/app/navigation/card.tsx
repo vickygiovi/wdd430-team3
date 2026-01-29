@@ -1,11 +1,14 @@
-const card: React.FC = () => {
+const Card: React.FC = () => {
   return (
-    <div className="card">
-      <div className="img" />
-      <p>Text</p>
-      <strong>$0</strong>
+    <div className="card1">
+      <div className="card1-img" />
+
+      <div className="card1-body">
+        <p>Text</p>
+        <strong>$0</strong>
+      </div>
     </div>
   );
 };
 
-export default card;
+export default Card;
