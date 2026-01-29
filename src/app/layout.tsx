@@ -40,7 +40,7 @@ export default function RootLayout({
           </div>
 
           <ul>
-            <li><a href="#">Browse Catalog</a></li>
+            <li><Link href="/catalog">Browse Catalog</Link></li>
             <li><a href="#">My Ratings</a></li>
             <li><a href="#">My Written Reviews</a></li>
             <li><a href="#">Contact</a></li>
