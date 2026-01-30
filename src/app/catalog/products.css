@@ -133,12 +133,13 @@ body {
   margin-bottom: 24px;
 }
 
-.search {
+.search-bar input {
   background: #333;
+  border: 1px solid #444;
   color: white;
-  padding: 6px 16px;
+  padding: 0.6rem 1.2rem;
   border-radius: 20px;
-  font-size: 14px;
+  outline: none;
 }
 
 .filters button {

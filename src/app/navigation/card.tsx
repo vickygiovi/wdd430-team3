@@ -1,11 +1,13 @@
-const Card: React.FC = () => {
+import "./card.css";
+
+const Card: React.FC = ({ product }) => {
   return (
     <div className="card1">
       <div className="card1-img" />
 
       <div className="card1-body">
-        <p>Text</p>
-        <strong>$0</strong>
+        <p>{product.name}</p>
+        <strong>${product.price.toFixed(2)}</strong>
       </div>
     </div>
   );

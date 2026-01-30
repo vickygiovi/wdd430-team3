@@ -1,0 +1,21 @@
+/* 1. Primero, asegúrate de que la tarjeta original tenga una transición */
+.card1 {
+  background: #d8aa55;
+  border-radius: 8px;
+  padding: 10px;
+  /* La transición hace que el efecto no sea brusco, sino suave */
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+/* 2. El efecto de Hover */
+.card1:hover {
+  /* Mueve la tarjeta 8 píxeles hacia arriba */
+  transform: translateY(-8px);
+  
+  /* Cambia un poco el color si quieres (opcional) */
+  background: #e5b865;
+  
+  /* Agrega una sombra para dar profundidad */
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}

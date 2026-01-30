@@ -1,0 +1,33 @@
+.filters button {
+  margin-left: 8px;
+  padding: 6px 14px;
+  border-radius: 20px;
+  border: 1px solid transparent; /* Para evitar saltos visuales */
+  background: #444;
+  color: white;
+  font-size: 13px;
+  cursor: pointer;
+  
+  /* Esto hace que el cambio de color no sea brusco */
+  transition: all 0.3s ease;
+}
+
+/* Estado HOVER: Cuando pasas el mouse por encima */
+.filters button:hover {
+  background: #555;      /* Un gris un poco más claro */
+  transform: translateY(-1px); /* Efecto sutil de elevación */
+}
+
+/* Estado ACTIVE: Cuando el botón está seleccionado */
+.filters button.active {
+  background: #e85b2a;   /* Tu color naranja */
+  color: white;
+  font-weight: 600;
+  box-shadow: 0 4px 10px rgba(232, 91, 42, 0.3); /* Brillo sutil */
+}
+
+/* Evitar que el hover afecte al botón que ya está activo (opcional) */
+.filters button.active:hover {
+  background: #e85b2a; 
+  cursor: default;
+}
