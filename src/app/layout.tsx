@@ -52,7 +52,7 @@ export default function RootLayout({
             <button className="btn btn-profile">My Profile</button>
             <button className="btn btn-stories">My Stories</button>
             <Link
-              href="/catalog"
+              href="/products"
             >
               <button className="btn btn-products">My Products</button>
             </Link>
