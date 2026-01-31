@@ -44,11 +44,11 @@ export default function CreateProductPage() {
 
 return (
   <section className="create-container">
-    <h1 className="create-title">Crear producto</h1>
+    <h1 className="create-title">Create a Product</h1>
 
     <form className="create-form" onSubmit={handleSubmit}>
       <div className="form-group">
-        <label htmlFor="name">Nombre del producto</label>
+        <label htmlFor="name">Product Name</label>
         <input
           id="name"
           type="text"
@@ -60,7 +60,7 @@ return (
       </div>
 
       <div className="form-group">
-        <label htmlFor="price">Precio</label>
+        <label htmlFor="price">Price</label>
         <input
           id="price"
           type="number"
@@ -72,7 +72,7 @@ return (
       </div>
 
       <div className="form-group">
-        <label htmlFor="description">Descripción</label>
+        <label htmlFor="description">Description</label>
         <textarea
           id="description"
           name="description"
@@ -82,7 +82,7 @@ return (
       </div>
 
       <button className="create-button" type="submit">
-        Crear
+        Create
       </button>
     </form>
   </section>
