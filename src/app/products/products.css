@@ -1,0 +1,257 @@
+/***************************************
+Products Page Specific Styles
+****************************************/
+/* ===== RESET ===== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: system-ui, sans-serif;
+}
+
+/* ===== BODY ===== */
+body {
+  background: #2c2926;
+  color: #eee;
+}
+
+/* ===== NAVBAR ===== */
+.navbar {
+  background: #f3efe9;
+  display: grid;
+  grid-template-columns: 60px 1fr auto;
+  align-items: center;
+  padding: 12px 32px;
+}
+
+.logo {
+  font-weight: 700;
+  font-size: 22px;
+}
+
+.navbar-center {
+  display: flex;
+  justify-content: center;
+  gap: 28px;
+}
+
+.navbar-center a {
+  font-size: 14px;
+  color: #222;
+}
+
+.navbar-right {
+  display: flex;
+  gap: 10px;
+}
+
+.btn {
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-size: 13px;
+}
+
+.btn.ghost {
+  border: 1px solid #444;
+  background: transparent;
+}
+
+.btn.primary {
+  background: #e85b2a;
+  color: white;
+  border: none;
+}
+
+/* ===== LAYOUT ===== */
+.products-layout {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: 24px;
+  padding: 24px;
+}
+
+/* ===== SIDEBAR ===== */
+.sidebar {
+  background: #8f957f;
+  border-radius: 8px;
+  padding: 16px;
+  color: #222;
+}
+
+.sidebar h5 {
+  margin: 12px 0 8px;
+}
+
+.tags span {
+  display: inline-block;
+  background: #e6e6e6;
+  padding: 4px 8px;
+  border-radius: 12px;
+  margin: 4px 4px 8px 0;
+  font-size: 12px;
+}
+
+.group label {
+  display: block;
+  font-size: 13px;
+  margin-bottom: 6px;
+}
+
+/* ===== GRID ===== */
+.products-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+/* ===== CARD1 ===== */
+.card1 {
+  background: #d8aa55;
+  border-radius: 8px;
+  padding: 10px;
+}
+
+.card1-img {
+  background: #f2f2f2;
+  height: 170px;
+  border-radius: 8px;
+  margin-bottom: 10px;
+}
+
+.card1-body {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 14px;
+}
+
+/* ===== TOOLBAR ===== */
+.products-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.search {
+  background: #333;
+  color: white;
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-size: 14px;
+}
+
+.filters button {
+  margin-left: 8px;
+  padding: 6px 14px;
+  border-radius: 20px;
+  border: none;
+  background: #444;
+  color: white;
+  font-size: 13px;
+}
+
+.filters button.active {
+  background: #e85b2a;
+}
+
+/* ===== FOOTER ===== */
+.footer {
+  background: #8f957f;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  padding: 40px;
+  text-align: center;
+  color: #222;
+  gap: 40px;
+}
+
+.footer h6 {
+  margin-bottom: 10px;
+  font-size: 14px;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 900px) {
+  .products-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .products-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .navbar-center {
+    display: none;
+  }
+}
+
+/* CREATE PRODUCT PAGE */
+
+.create-container {
+  max-width: 500px;
+  margin: 3rem auto;
+  padding: 2rem;
+  background: #f5f2ed;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+}
+
+.create-title {
+  text-align: center;
+  font-size: 1.8rem;
+  margin-bottom: 2rem;
+  font-weight: 600;
+}
+
+.create-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+}
+
+.form-group input,
+.form-group textarea {
+  padding: 0.75rem;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+}
+
+.form-group textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: #c05c3e;
+  box-shadow: 0 0 0 2px rgba(192, 92, 62, 0.2);
+}
+
+.create-button {
+  margin-top: 1rem;
+  padding: 0.8rem;
+  border: none;
+  border-radius: 8px;
+  background-color: #c05c3e;
+  color: white;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.create-button:hover {
+  background-color: #a94f36;
+}
