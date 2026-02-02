@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { Plus } from "lucide-react";
+import Link from "next/link";
 
 export default function Page() {
   const products = [
@@ -81,7 +82,11 @@ export default function Page() {
     <>
       <section className="add-product">
         <h1 className="text-3xl font-bold">My Products</h1>
-        <button className="btn btn-newproduct">Add New Product</button>
+        <Link
+          href="/products/create"
+        >
+          <button className="btn btn-newproduct">Add New Product</button>
+        </Link>
       </section>
       <section className="catalog container mx-auto">
         {products.map((product) => (

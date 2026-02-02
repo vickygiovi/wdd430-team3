@@ -1,0 +1,47 @@
+/* Ocultar el input feo original */
+.hidden-file-input {
+  display: none;
+}
+
+/* Estilizar el label como un botón */
+.custom-file-upload {
+  display: inline-block;
+  padding: 12px 24px;
+  cursor: pointer;
+  background-color: #f8f9fa;
+  border: 2px dashed #ccc;
+  border-radius: 8px;
+  color: #555;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  text-align: center;
+  width: 100%; /* Para que ocupe todo el ancho como tus otros inputs */
+}
+
+.custom-file-upload:hover {
+  background-color: #e9ecef;
+  border-color: #007bff;
+  color: #007bff;
+}
+
+.upload-icon {
+  margin-right: 8px;
+  font-size: 1.2rem;
+}
+
+/* Estilo para la galería de miniaturas */
+.preview-gallery {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.preview-item img {
+  width: 70px;
+  height: 70px;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
