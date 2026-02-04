@@ -1,9 +1,12 @@
-import Image from "next/image";
-import { Plus } from "lucide-react";
-import Link from "next/link";
+/* import Navbar from "../navigation/navbar"; */
+import Sidebar from "../navigation/sidebar";
+import Card from "../navigation/card";
+import Filters from "./filters/filters";
+import "./products.css";
+import "../index.css";
+/* import Footer from "../navigation/footer"; */
 
-export default function Page() {
-  const products = [
+const products = [
     {
       id: 1,
       name: "Hand-Thrown Ceramic Mug",
@@ -78,56 +81,32 @@ export default function Page() {
     },
   ];
 
+export default function ProductsPage() {
   return (
     <>
-      <section className="add-product">
-        <h1 className="text-3xl font-bold">My Products</h1>
-        <Link
-          href="/products/create"
-        >
-          <button className="btn btn-newproduct">Add New Product</button>
-        </Link>
-      </section>
-      <section className="catalog container mx-auto">
-        {products.map((product) => (
-          <article
-            key={product.id}
-            className="card group flex flex-col items-center text-center p-5 bg-white border border-gray-100"
-          >
-            {/* Contenedor de imagen con efecto de escala */}
-            <div className="overflow-hidden rounded-md mb-4 bg-gray-50">
-              <Image
-                src={product.image}
-                alt={product.name}
-                width={250}
-                height={250}
-                className="object-cover transition-transform duration-300 group-hover:scale-110"
-              />
+      {/* <Navbar /> */}
+
+      <main className="products-layout">
+        <Sidebar />
+
+        <section className="products-content">
+          <div className="products-toolbar">
+            <div className="search-bar">
+              <input type="text" placeholder="Search products..." />
             </div>
+            <Filters />
+            
+          </div>
 
-            {/* Título: ahora sí se verá grande */}
-            <h3 className="text-xl font-bold text-gray-800 mb-2 leading-tight">
-              {product.name}
-            </h3>
+          <div className="products-grid">
+            {products.map((product) => (
+              <Card key={product.id} product={product} />
+            ))}
+          </div>
+        </section>
+      </main>
 
-            {/* Precio con un estilo más artesanal */}
-            <p className="text-emerald-700 font-semibold text-lg">
-              ${product.price.toFixed(2)}
-            </p>
-
-            {/* Botón opcional para mejorar el CTA */}
-
-            <Link
-              href={`/products/${product.id}/edit`}
-              className="mt-4 w-full py-2 bg-gray-900 text-white text-sm rounded hover:bg-gray-700 transition-colors"
-            >
-              <button>
-                Edit Product
-              </button>
-            </Link>
-          </article>
-        ))}
-      </section>
+     {/*  <Footer /> */}
     </>
   );
 }

@@ -1,6 +1,7 @@
 import Image from "next/image";
 import "./index.css";
 import { Twitter, Instagram, Youtube, Linkedin } from 'lucide-react';
+import Link from 'next/link';
 
 const testimonialData = [
   {
@@ -78,7 +79,11 @@ export default function Home() {
         <p>A curated marketplace for artisans and creators</p>
 
         <div className="hero-actions">
-          <button className="btn btn-primary">Browse Catalog</button>
+          <Link
+            href="/catalog"
+          >
+            <button className="btn btn-primary">Browse Catalog</button>
+          </Link>
           <button className="btn btn-secondary">Contact Us</button>
         </div>
       </section>
