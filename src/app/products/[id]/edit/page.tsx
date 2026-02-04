@@ -2,11 +2,11 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import "../products.css";
-import "../../index.css";
+import "../../products.css";
+import "../../../index.css";
 import React from "react";
 import Image from "next/image";
-import "./create.css";
+import "../../create/create.css";
 
 export default function CreateProductPage() {
   const router = useRouter();
@@ -19,9 +19,9 @@ export default function CreateProductPage() {
   }
 
   const [form, setForm] = useState<ProductForm>({
-    name: "",
-    price: "",
-    description: "",
+    name: "Hand-Thrown Ceramic Mug",
+    price: "32.0",
+    description: "A rustic, speckled stoneware mug with a deep blue glaze, perfect for cozy mornings.",
     images: [],
   });
 
@@ -69,6 +69,8 @@ export default function CreateProductPage() {
           ...prev,
           images: [...prev.images, base64String],
         }));
+
+        console.log(form.images)
       };
 
       reader.readAsDataURL(file);

@@ -116,9 +116,15 @@ export default function Page() {
             </p>
 
             {/* Botón opcional para mejorar el CTA */}
-            <button className="mt-4 w-full py-2 bg-gray-900 text-white text-sm rounded hover:bg-gray-700 transition-colors">
-              View Details
-            </button>
+
+            <Link
+              href={`/products/${product.id}/edit`}
+              className="mt-4 w-full py-2 bg-gray-900 text-white text-sm rounded hover:bg-gray-700 transition-colors"
+            >
+              <button>
+                Edit Product
+              </button>
+            </Link>
           </article>
         ))}
       </section>
