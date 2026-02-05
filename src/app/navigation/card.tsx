@@ -1,12 +1,15 @@
+import Link from 'next/link';
+
 type CardProps = {
+  id: string;
   name: string;
   price: number;
   description: string;
 };
 
-const Card: React.FC<CardProps> = ({ name, price, description }) => {
+const Card: React.FC<CardProps> = ({ id, name, price, description }) => {
   return (
-    <div className="card1">
+    <Link href={`/products/${id}`} className="card1">
       <div className="card1-img" />
 
       <div className="card1-body">
@@ -14,7 +17,7 @@ const Card: React.FC<CardProps> = ({ name, price, description }) => {
         <small>{description}</small>
         <strong>${price}</strong>
       </div>
-    </div>
+    </Link>
   );
 };
 

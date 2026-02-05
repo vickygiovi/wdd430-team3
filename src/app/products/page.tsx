@@ -7,6 +7,7 @@ import "./products.css";
 import "../index.css";
 
 type Product = {
+  id: string;
   name: string;
   price: number;
   description: string;
@@ -42,9 +43,10 @@ export default function ProductsPage() {
           {products.length === 0 ? (
             <p>No hay productos creados</p>
           ) : (
-            products.map((product, i) => (
+            products.map((product) => (
               <Card
-                key={i}
+                key={product.id}
+                id={product.id}
                 name={product.name}
                 price={product.price}
                 description={product.description}
