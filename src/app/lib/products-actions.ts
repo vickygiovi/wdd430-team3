@@ -46,7 +46,7 @@ export async function createProduct(formData: FormData) {
     `;
   } catch (error) {
     console.error('Error DB:', error);
-    return { message: 'Error al crear el producto.' };
+    console.error({ message: 'Error al crear el producto.' });
   }
 
   revalidatePath('/products');
@@ -84,7 +84,7 @@ export async function updateProduct(id: string, formData: FormData) {
       WHERE id = ${id}
     `;
   } catch (error) {
-    return { message: 'Error al actualizar el producto.' };
+    console.error({ message: 'Error al actualizar el producto.', error });
   }
 
   revalidatePath(`/products`);
@@ -97,6 +97,6 @@ export async function deleteProduct(id: string) {
     await sql`DELETE FROM products WHERE id = ${id}`;
     revalidatePath('/products');
   } catch (error) {
-    return { message: 'No se pudo eliminar el producto.' };
+    console.error({ message: 'No se pudo eliminar el producto.', error });
   }
 }

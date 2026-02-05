@@ -8,7 +8,11 @@ import { getUser } from './user-data';
 
 const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
 
-export async function authenticate(formData: FormData) {
+export interface AuthState {
+  error?: string;
+}
+
+export async function authenticate(prevState: AuthState | undefined | null, formData: FormData): Promise<AuthState> {
   const email = formData.get('email') as string;
   const password = formData.get('password') as string;
 
@@ -33,6 +37,7 @@ export async function authenticate(formData: FormData) {
     // Si lo haces manual, guardarías un JWT en una cookie:
     // cookies().set('session', token, { httpOnly: true });
 
+    console.log('Usuario autenticado:', user.email);
     redirect('/'); // Login exitoso
   } else {
     return { error: 'Contraseña incorrecta.' };
@@ -59,7 +64,7 @@ export async function createUser(formData: FormData) {
       )
     `;
   } catch (error) {
-    return { message: 'Database Error: Error al crear usuario.' };
+    console.log({ message: 'Database Error: Error al crear usuario.' });
   }
 
   revalidatePath('/login'); // Actualiza la lista de usuarios
@@ -82,7 +87,7 @@ export async function updateUser(id: string, formData: FormData) {
       WHERE id = ${id}
     `;
   } catch (error) {
-    return { message: 'Error al actualizar usuario.' };
+    console.log({ message: 'Error al actualizar usuario.' });
   }
 
   revalidatePath('/profile');
@@ -94,8 +99,8 @@ export async function deleteUser(id: string) {
   try {
     await sql`UPDATE users SET is_active = false WHERE id = ${id}`;
     revalidatePath('/'); 
-    return { message: 'Usuario desactivado.' };
+    console.log({ message: 'Usuario desactivado.' });
   } catch (error) {
-    return { message: 'Error al eliminar usuario.' };
+    console.log({ message: 'Error al eliminar usuario.' });
   }
 }

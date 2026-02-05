@@ -20,7 +20,7 @@ export async function createCategory(formData: FormData) {
       VALUES (${nombre}, ${descripcion}, ${slug})
     `;
   } catch (error) {
-    return { message: 'Error: El nombre o el slug ya existen.' };
+    console.error('Error:', error);
   }
 
   revalidatePath('/categories');
@@ -43,7 +43,7 @@ export async function updateCategory(id: string, formData: FormData) {
       WHERE id = ${id}
     `;
   } catch (error) {
-    return { message: 'Error al actualizar la categoría.' };
+    console.error('Error al actualizar la categoría:', error);
   }
 
   revalidatePath('/categories');
@@ -57,6 +57,6 @@ export async function deleteCategory(id: string) {
     revalidatePath('/categories');
   } catch (error) {
     // Esto fallará si hay productos vinculados a esta categoría
-    return { message: 'No se puede eliminar: tiene productos asociados.' };
+    console.error({ message: 'No se puede eliminar: tiene productos asociados.' });
   }
 }

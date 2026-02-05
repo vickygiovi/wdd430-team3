@@ -23,7 +23,7 @@ export async function createStory(artesanoId: string, formData: FormData) {
       )
     `;
   } catch (error) {
-    return { message: 'Error al crear la historia.' };
+    console.error('Error al crear la historia:', error);
   }
 
   revalidatePath('/stories'); // Refresca el feed global
@@ -51,7 +51,7 @@ export async function updateStory(id: string, formData: FormData) {
       WHERE id = ${id}
     `;
   } catch (error) {
-    return { message: 'Error al actualizar.' };
+    console.error('Error al actualizar la historia:', error);
   }
 
   revalidatePath('/stories');
@@ -65,7 +65,7 @@ export async function deleteStory(id: string) {
     revalidatePath('/stories');
     redirect('/stories');
   } catch (error) {
-    return { message: 'No se pudo eliminar la historia.' };
+    console.error('Error al eliminar la historia:', error);
   }
 }
 

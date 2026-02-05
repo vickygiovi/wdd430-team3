@@ -16,7 +16,7 @@ export async function createReview(
 
   // Validación básica
   if (!rating || rating < 1 || rating > 5) {
-    return { error: 'Por favor, selecciona una puntuación válida.' };
+    console.log({ error: 'Por favor, selecciona una puntuación válida.' });
   }
 
   try {
@@ -35,10 +35,10 @@ export async function createReview(
     `;
   } catch (error) {
     console.error('Database Error:', error);
-    return { error: 'No se pudo guardar tu reseña. Inténtalo de nuevo.' };
+    console.error('Error saving review:', error);
   }
 
   // Revalidamos la página del producto para mostrar la nueva reseña
-  revalidatePath(`/products/${productId}`);
-  return { success: '¡Reseña publicada con éxito!' };
+  revalidatePath(`/products/1`);
+  console.log({ success: '¡Reseña publicada con éxito!' });
 }
