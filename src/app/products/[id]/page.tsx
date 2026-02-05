@@ -3,6 +3,8 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
+import '../products.css';
+import '../../index.css';
 
 type Product = {
   id: string;
@@ -37,12 +39,23 @@ export default function ProductDetailPage() {
   }
 
   return (
+    <section className="details-container">
+      <div className="details-card">
+        <div className="details-image">
+        <div className="image-placeholder">Imagen del producto</div>
+      </div>
+    <div className="details-info">
     <div style={{ padding: '2rem' }}>
       <h1>{product.name}</h1>
       <p><strong>Price:</strong> ${product.price}</p>
       <p><strong>Description:</strong> {product.description}</p>
 
-      <Link href="/products">← Back to products</Link>
+      <Link href="/#"> <button className="create-button">Buy this Product</button></Link>
+      <br />
+      <Link href="/products"><button className="create-button">← Back to products</button></Link>
+      </div>
     </div>
+      </div>
+    </section>
   );
 }
