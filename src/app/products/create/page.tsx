@@ -1,15 +1,17 @@
 "use client";
 
-import { useState } from "react";
+import { useActionState, useState } from "react";
 import { useRouter } from "next/navigation";
 import "../products.css";
 import "../../index.css";
 import React from "react";
 import Image from "next/image";
 import "./create.css";
+import { createProduct, State } from '@/app/lib/products-actions';
 
-export default function CreateProductPage() {
-  const router = useRouter();
+export default function Form() {
+  const initialState: State = { message: null, errors: {} };
+  const [state, formAction] = useActionState(createProduct, initialState);
 
   interface ProductForm {
     name: string;
@@ -35,22 +37,20 @@ export default function CreateProductPage() {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  // const handleSubmit = (e: React.FormEvent) => {
+  //   e.preventDefault();
 
-    const stored = localStorage.getItem("products");
-    const products = stored ? JSON.parse(stored) : [];
+  //   const stored = localStorage.getItem("products");
+  //   const products = stored ? JSON.parse(stored) : [];
 
-    products.push({
-      name: form.name,
-      price: Number(form.price),
-      description: form.description,
-    });
+  //   products.push({
+  //     name: form.name,
+  //     price: Number(form.price),
+  //     description: form.description,
+  //   });
 
-    localStorage.setItem("products", JSON.stringify(products));
-
-    router.push("/products");
-  };
+  //   localStorage.setItem("products", JSON.stringify(products));
+  // };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     // Verificamos que existan archivos para evitar errores de nulos
@@ -79,17 +79,22 @@ export default function CreateProductPage() {
     <section className="create-container">
       <h1 className="create-title">Create a Product</h1>
 
-      <form className="create-form" onSubmit={handleSubmit}>
+      <form className="create-form" action={formAction}>
         <div className="form-group">
           <label htmlFor="name">Product Name</label>
           <input
             id="name"
             type="text"
-            name="name"
-            value={form.name}
-            onChange={handleChange}
-            required
+            name="nombre"
           />
+        </div>
+        <div id="name-error" aria-live="polite" aria-atomic="true" className="error-container">
+          {state.errors?.name &&
+            state.errors.name.map((error: string) => (
+              <p className="error-text mt-2 text-sm text-red-500" key={error}>
+                {error}
+              </p>
+          ))}
         </div>
 
         <div className="form-group">
@@ -97,21 +102,32 @@ export default function CreateProductPage() {
           <input
             id="price"
             type="number"
-            name="price"
-            value={form.price}
-            onChange={handleChange}
-            required
+            name="precio"
           />
+        </div>
+        <div id="price-error" aria-live="polite" aria-atomic="true" className="error-container">
+          {state.errors?.price &&
+            state.errors.price.map((error: string) => (
+              <p className="error-text mt-2 text-sm text-red-500" key={error}>
+                {error}
+              </p>
+            ))}
         </div>
 
         <div className="form-group">
           <label htmlFor="description">Description</label>
           <textarea
             id="description"
-            name="description"
-            value={form.description}
-            onChange={handleChange}
+            name="descripcion"
           />
+        </div>
+        <div id="description-error" aria-live="polite" aria-atomic="true" className="error-container">
+          {state.errors?.description &&
+            state.errors.description.map((error: string) => (
+              <p className="error-text mt-2 text-sm text-red-500" key={error}>
+                {error}
+              </p>
+          ))}
         </div>
 
         <div className="form-group">
@@ -128,6 +144,7 @@ export default function CreateProductPage() {
               multiple
               onChange={handleImageChange}
               className="hidden-file-input"
+              name="imagenes_galeria"
             />
           </div>
 
@@ -140,10 +157,27 @@ export default function CreateProductPage() {
             ))}
           </div>
         </div>
+        <div id="images-error" aria-live="polite" aria-atomic="true">
+          {state.errors?.images &&
+            state.errors.images.map((error: string) => (
+              <p className="mt-2 text-sm text-red-500" key={error}>
+                {error}
+              </p>
+          ))}
+        </div>
 
         <button className="create-button" type="submit">
           Create
         </button>
+
+        {/* Mensaje general al final del formulario */}
+        <div id="form-error" aria-live="polite" aria-atomic="true">
+          {state.message && (
+            <div className={`form-message ${state.errors && Object.keys(state.errors).length > 0 ? 'message-error' : 'message-success'}`}>
+              {state.message}
+            </div>
+          )}
+        </div>
       </form>
     </section>
   );
