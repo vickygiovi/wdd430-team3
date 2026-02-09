@@ -7,11 +7,48 @@ import { z } from 'zod';
 
 const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
 
+import { promises as fs } from 'fs';
+import path from 'path';
+
+// Función auxiliar para guardar archivos
+async function saveFile(file: File, folder: string): Promise<string> {
+  const arrayBuffer = await file.arrayBuffer();
+  const buffer = Buffer.from(arrayBuffer);
+  
+  // Crear un nombre único para evitar duplicados
+  const fileName = `${Date.now()}-${file.name.replaceAll(" ", "_")}`;
+  const relativePath = `/uploads/${folder}/${fileName}`;
+  const absolutePath = path.join(process.cwd(), 'public', relativePath);
+
+  // Asegurarse de que el directorio existe
+  await fs.mkdir(path.dirname(absolutePath), { recursive: true });
+  
+  // Guardar el archivo
+  await fs.writeFile(absolutePath, buffer);
+  
+  return relativePath; // Esto es lo que guardaremos en la DB
+}
+
 // 1. Definimos el esquema de validación
 const CreateProduct = z.object({
   name: z.string().min(1, "El nombre es obligatorio"),
   price: z.coerce.number().gt(0, "El precio debe ser mayor a 0"),
   description: z.string().min(5, "La descripción es muy corta"),
+  category_id: z.preprocess(
+    (val) => val ?? "", // Si es null o undefined, lo convierte en ""
+    z.string().min(1, "Por favor selecciona una categoría")
+  ),
+  stock: z.coerce
+    .number()
+    .int("El stock debe ser un número entero")
+    .min(0, "El stock no puede ser negativo"),
+  imagen_principal: z
+    .any()
+    .refine((file) => file?.size > 0, "La imagen principal es obligatoria"),
+  is_available: z.coerce.boolean(),
+  size: z.string().optional(),
+  color: z.string().optional(),
+  keywords: z.string().optional(),
 });
 
 export type State = {
@@ -19,7 +56,14 @@ export type State = {
     name?: string[];        // Antes era customerId
     price?: string[];       // Antes era amount
     description?: string[]; // Antes era status
+    category_id?: string[]; // Nuevo campo para categoría
     images?: string[];      // Opcional, si validas imágenes
+    stock?: string[];
+    imagen_principal?: string[];
+    is_available?: string[];
+    size?: string[];
+    color?: string[];
+    keywords?: string[];
   };
   message?: string | null;
 };
@@ -38,6 +82,13 @@ export async function createProduct(prevState: State, formData: FormData): Promi
     name: formData.get('nombre'),
     price: formData.get('precio'),
     description: formData.get('descripcion'),
+    category_id: formData.get('category_id'),
+    stock: formData.get('stock'),
+    imagen_principal: formData.get('imagen_principal'),
+    is_available: formData.get('is_available') === 'on',
+    size: formData.get('size')?.toString() || null, // Convertir vacío a null
+    color: formData.get('color')?.toString() || null,
+    keywords: parseKeywords(formData.get('keywords')?.toString() || ""),
   });
 
   // Si la validación falla, devolvemos los errores específicos
@@ -49,21 +100,32 @@ export async function createProduct(prevState: State, formData: FormData): Promi
   }
 
   // Extraemos datos según el esquema
-  const { name, price, description } = validatedFields.data;
+  const { name, price, description, category_id, stock, is_available, size, color, keywords } = validatedFields.data;
 
   const artesano_id = formData.get('artesano_id') as string;
-  const category_id = formData.get('category_id') as string;
-  const stock = parseInt(formData.get('stock') as string || '0');
-  const imagen_principal_url = formData.get('imagen_principal_url') as string;
-  const is_available = formData.get('is_available') === 'on';
   
-  // Nuevos campos y arrays
-  const size = formData.get('size') as string;
-  const color = formData.get('color') as string;
-  const keywords = parseKeywords(formData.get('keywords') as string);
-  const imagenes_galeria = parseKeywords(formData.get('imagenes_galeria') as string);
+  // 1. Obtener archivos del FormData
+  const mainImageFile = formData.get('imagen_principal') as File;
+  const galleryFiles = formData.getAll('imagenes_galeria') as File[]; // Nota el getAll
+
+  let main_image_url = '';
+  const gallery_urls: string[] = [];
 
   try {
+
+    // 2. Guardar imagen principal físicamente
+    if (mainImageFile && mainImageFile.size > 0) {
+      main_image_url = await saveFile(mainImageFile, 'main');
+    }
+
+    // 3. Guardar galería físicamente
+    for (const file of galleryFiles) {
+      if (file.size > 0) {
+        const url = await saveFile(file, 'gallery');
+        gallery_urls.push(url);
+      }
+    }
+
     await sql`
       INSERT INTO products (
         artesano_id, category_id, nombre, descripcion, precio, 
@@ -71,8 +133,8 @@ export async function createProduct(prevState: State, formData: FormData): Promi
         keywords, size, color
       ) VALUES (
         ${artesano_id}, ${category_id}, ${name}, ${description}, ${price}, 
-        ${imagen_principal_url}, ${imagenes_galeria}, ${stock}, ${is_available},
-        ${keywords}, ${size}, ${color}
+        ${main_image_url}, ${gallery_urls}, ${stock}, ${is_available},
+        ${keywords || []}, ${size ?? null}, ${color ?? null}
       )
     `;
   } catch (error) {

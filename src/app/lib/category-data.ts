@@ -4,15 +4,30 @@ import { redirect } from 'next/navigation';
 
 const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
 
+// Define la interfaz para que coincida con tu SELECT
+export interface Category {
+  id: number;
+  nombre: string;
+  descripcion?: string;
+  slug?: string;
+}
+
 // READ: Obtener todas las categorías para listados o selectores
-export async function fetchCategories() {
+export async function fetchCategories(): Promise<Category[]> {
   try {
-    const categories = await sql`
+    const data = await sql`
       SELECT id, nombre, descripcion, slug 
       FROM categories 
       ORDER BY nombre ASC
     `;
-    return categories;
+
+    // Transformamos el RowList en un Array estándar
+    return data.map(row => ({
+      id: row.id,
+      nombre: row.nombre,
+      descripcion: row.descripcion,
+      slug: row.slug
+    }));
   } catch (error) {
     console.error('Database Error:', error);
     throw new Error('No se pudieron cargar las categorías.');

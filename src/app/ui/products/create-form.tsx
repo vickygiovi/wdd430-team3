@@ -1,0 +1,330 @@
+"use client";
+
+import { Category } from "@/app/lib/category-data";
+import { createProduct, State } from "@/app/lib/products-actions";
+import { useActionState, useState } from "react";
+
+export default function Form({ categories }: { categories: Category[] }) {
+  const initialState: State = { message: null, errors: {} };
+  const [state, formAction] = useActionState(createProduct, initialState);
+
+  interface ProductForm {
+    images: string[]; // Aquí definimos que es un array de strings
+    main_image?: string; // Para la imagen principal, si quieres manejarla por separado
+  }
+
+  const [form, setForm] = useState<ProductForm>({
+    images: [],
+  });
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    // Verificamos que existan archivos para evitar errores de nulos
+    if (!e.target.files) return;
+
+    const files = Array.from(e.target.files);
+
+    files.forEach((file) => {
+      const reader = new FileReader();
+
+      reader.onloadend = () => {
+        // Forzamos el tipo a string porque readAsDataURL siempre devuelve un string (o null)
+        const base64String = reader.result as string;
+
+        setForm((prev) => ({
+          ...prev,
+          images: [...prev.images, base64String],
+        }));
+      };
+
+      reader.readAsDataURL(file);
+    });
+  };
+
+  const handleMainImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    // 1. Verificamos que haya un archivo seleccionado
+    if (!e.target.files || e.target.files.length === 0) return;
+
+    const file = e.target.files[0]; // Tomamos solo el primer archivo
+    const reader = new FileReader();
+
+    reader.onloadend = () => {
+      // 2. Obtenemos el resultado como string (Base64)
+      const base64String = reader.result as string;
+
+      // 3. Actualizamos el estado apuntando a la propiedad de imagen principal
+      setForm((prev) => ({
+        ...prev,
+        main_image: base64String, // Guardamos el string para la vista previa
+      }));
+    };
+
+    reader.readAsDataURL(file);
+  };
+
+  return (
+    <form className="create-form" action={formAction}>
+      <div className="form-group">
+        <label htmlFor="name">Product Name</label>
+        <input id="name" type="text" name="nombre" />
+
+        {state.errors?.name && (
+          <div id="name-error" aria-live="polite" className="error-container">
+            {state.errors.name.map((error: string) => (
+              <p className="error-text" key={error}>
+                {error}
+              </p>
+            ))}
+          </div>
+        )}
+      </div>
+
+      <div className="form-group">
+        <label htmlFor="price">Price</label>
+        <input id="price" type="number" name="precio" />
+
+        {state.errors?.price && (
+          <div
+            id="price-error"
+            aria-live="polite"
+            aria-atomic="true"
+            className="error-container"
+          >
+            {state.errors.price.map((error: string) => (
+              <p className="error-text mt-1 text-sm text-red-500" key={error}>
+                {error}
+              </p>
+            ))}
+          </div>
+        )}
+      </div>
+
+      <div className="form-group">
+        <label htmlFor="stock">Stock Quantity</label>
+        <input
+          id="stock"
+          type="number"
+          name="stock"
+          placeholder="0"
+          step="1"
+          min="0"
+        />
+
+        {state.errors?.stock && (
+          <div id="stock-error" aria-live="polite" className="error-container">
+            {state.errors.stock.map((error: string) => (
+              <p className="error-text mt-1 text-sm text-red-500" key={error}>
+                {error}
+              </p>
+            ))}
+          </div>
+        )}
+      </div>
+
+      <div className="form-group-checkbox">
+        <label className="checkbox-label">
+          <input
+            type="checkbox"
+            name="is_available"
+            defaultChecked={true} // O false, según prefieras por defecto
+          />
+          <span>Product Available for Sale</span>
+        </label>
+
+        {state.errors?.is_available && (
+          <div
+            id="available-error"
+            aria-live="polite"
+            className="error-container"
+          >
+            {state.errors.is_available.map((error: string) => (
+              <p className="error-text mt-1 text-sm text-red-500" key={error}>
+                {error}
+              </p>
+            ))}
+          </div>
+        )}
+      </div>
+
+      <div className="form-group">
+        <label htmlFor="description">Description</label>
+        <textarea id="description" name="descripcion" />
+
+        {state.errors?.description && (
+          <div
+            id="description-error"
+            aria-live="polite"
+            aria-atomic="true"
+            className="error-container"
+          >
+            {state.errors.description.map((error: string) => (
+              <p className="error-text mt-1 text-sm text-red-500" key={error}>
+                {error}
+              </p>
+            ))}
+          </div>
+        )}
+      </div>
+
+      <div className="form-group">
+        <label htmlFor="category">Category</label>
+        <select
+          id="category"
+          name="category_id" // Este nombre debe coincidir con lo que busques en el Action
+          className="form-control form-select" // O la clase que uses para tus inputs
+          defaultValue=""
+        >
+          <option value="" disabled>
+            Select a category
+          </option>
+          {categories.map((cat) => (
+            <option key={cat.id} value={cat.id}>
+              {cat.nombre}
+            </option>
+          ))}
+        </select>
+
+        {/* Manejo de errores para la categoría */}
+        {state.errors?.category_id && (
+          <div
+            id="category-error"
+            aria-live="polite"
+            className="error-container"
+          >
+            {state.errors.category_id.map((error: string) => (
+              <p className="error-text mt-1 text-sm text-red-500" key={error}>
+                {error}
+              </p>
+            ))}
+          </div>
+        )}
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {/* Campo Size */}
+        <div className="form-group">
+          <label htmlFor="size">Size / Dimensions</label>
+          <input
+            id="size"
+            name="size"
+            type="text"
+            placeholder="Ej: 20x30cm o Large"
+          />
+        </div>
+
+        {/* Campo Color */}
+        <div className="form-group">
+          <label htmlFor="color">Color</label>
+          <input
+            id="color"
+            name="color"
+            type="text"
+            placeholder="Ej: Madera natural, Azul, etc."
+          />
+        </div>
+      </div>
+
+      {/* Campo Keywords */}
+      <div className="form-group">
+        <label htmlFor="keywords">Keywords (separated by commas)</label>
+        <input
+          id="keywords"
+          name="keywords"
+          type="text"
+          placeholder="decoracion, artesania, madera, hogar"
+        />
+        <p className="text-xs text-gray-500 mt-1">
+          Press comma to separate tags.
+        </p>
+      </div>
+
+      <div className="form-group">
+        <label htmlFor="imagen_principal">Main Product Image</label>
+        <div className="file-upload-wrapper">
+          <label htmlFor="imagen_principal" className="custom-file-upload">
+            <span className="upload-icon">📸</span> Select main image
+          </label>
+          <input
+            id="imagen_principal"
+            name="imagen_principal"
+            type="file"
+            accept="image/*"
+            className="hidden-file-input"
+            onChange={handleMainImageChange}
+          />
+        </div>
+
+        {state.errors?.imagen_principal && (
+          <div
+            id="main-image-error"
+            aria-live="polite"
+            className="error-container"
+          >
+            {state.errors.imagen_principal.map((error: string) => (
+              <p className="error-text mt-1 text-sm text-red-500" key={error}>
+                {error}
+              </p>
+            ))}
+          </div>
+        )}
+
+        {/* Vista previa mejorada */}
+        <div className="preview-gallery">
+          {form.main_image && <img src={form.main_image} alt="preview" />}
+        </div>
+      </div>
+
+      <div className="form-group">
+        <label>Product Images</label>
+
+        <div className="file-upload-wrapper">
+          <label htmlFor="images" className="custom-file-upload">
+            <span className="upload-icon">📁</span> Select images
+          </label>
+          <input
+            id="images"
+            type="file"
+            accept="image/*"
+            multiple
+            onChange={handleImageChange}
+            className="hidden-file-input"
+            name="imagenes_galeria"
+          />
+        </div>
+
+        {/* Vista previa mejorada */}
+        <div className="preview-gallery">
+          {form.images.map((img, index) => (
+            <div key={index} className="preview-item">
+              <img src={img} alt="preview" />
+            </div>
+          ))}
+        </div>
+
+        {state.errors?.images && (
+          <div id="images-error" aria-live="polite" aria-atomic="true">
+            {state.errors.images.map((error: string) => (
+              <p className="mt-1 text-sm text-red-500" key={error}>
+                {error}
+              </p>
+            ))}
+          </div>
+        )}
+      </div>
+
+      <button className="create-button" type="submit">
+        Create
+      </button>
+
+      {/* Mensaje general al final del formulario */}
+      {state.message && (
+        <div id="form-error" aria-live="polite" aria-atomic="true">
+          <div
+            className={`form-message ${state.errors && Object.keys(state.errors).length > 0 ? "message-error" : "message-success"}`}
+          >
+            {state.message}
+          </div>
+        </div>
+      )}
+    </form>
+  );
+}
