@@ -4,6 +4,7 @@ import postgres from 'postgres';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { z } from 'zod';
+import crypto from 'crypto';
 
 const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
 
@@ -16,7 +17,8 @@ async function saveFile(file: File, folder: string): Promise<string> {
   const buffer = Buffer.from(arrayBuffer);
   
   // Crear un nombre único para evitar duplicados
-  const fileName = `${Date.now()}-${file.name.replaceAll(" ", "_")}`;
+  const safeName = file.name.replaceAll(" ", "_");
+  const fileName = `${crypto.randomUUID()}-${safeName}`;
   const relativePath = `/uploads/${folder}/${fileName}`;
   const absolutePath = path.join(process.cwd(), 'public', relativePath);
 
@@ -48,7 +50,7 @@ const CreateProduct = z.object({
   is_available: z.coerce.boolean(),
   size: z.string().optional(),
   color: z.string().optional(),
-  keywords: z.string().optional(),
+  keywords: z.array(z.string()).optional(),
   galleryFiles: z
     .array(z.instanceof(File))
     .min(1, "Debes subir al menos una imagen para la galería")
@@ -64,7 +66,7 @@ export type State = {
     price?: string[];       // Antes era amount
     description?: string[]; // Antes era status
     category_id?: string[]; // Nuevo campo para categoría
-    images?: string[];      // Opcional, si validas imágenes
+    galleryFiles?: string[];      // Opcional, si validas imágenes
     stock?: string[];
     mainImageFile?: string[];
     is_available?: string[];
@@ -155,21 +157,35 @@ const parseKeywords = (raw: string | null): string[] => {
 // }
 
 export async function createProduct(prevState: State, formData: FormData): Promise<State> {
-  // 1. Validación con Zod (Aseguramos tipos numéricos y archivos)
+  console.log(
+    'imagenes_galeria ->',
+    formData.getAll('imagenes_galeria'),
+    'length:',
+    formData.getAll('imagenes_galeria').length
+  );
+
+  // 1. Pre-procesamiento de archivos (Limpiamos los archivos vacíos antes de validar)
+  const rawMainImage = formData.get('imagen_principal');
+  const mainImageFile = (rawMainImage instanceof File && rawMainImage.size > 0) ? rawMainImage : null;
+
+  const galleryFiles = formData.getAll('imagenes_galeria').filter(
+    (entry): entry is File => entry instanceof File && entry.size > 0
+  );
+
+  // 2. Validación con Zod
   const validatedFields = CreateProduct.safeParse({
     name: formData.get('nombre'),
-    price: Number(formData.get('precio')), // Convertir a número
+    price: formData.get('precio'), // Deja que Zod lo convierta vía coerce
     description: formData.get('descripcion'),
     category_id: formData.get('category_id'),
-    stock: Number(formData.get('stock')), // Convertir a número
+    stock: formData.get('stock'),
     is_available: formData.get('is_available') === 'on',
-    size: formData.get('size')?.toString() || null,
-    color: formData.get('color')?.toString() || null,
+    size: formData.get('size')?.toString() || undefined,
+    color: formData.get('color')?.toString() || undefined,
+    // Pasamos el array ya procesado por parseKeywords
     keywords: parseKeywords(formData.get('keywords')?.toString() || ""),
-    mainImageFile: formData.get('imagen_principal'),
-    galleryFiles: formData.getAll('imagenes_galeria').filter(
-      (entry): entry is File => entry instanceof File && entry.size > 0
-    ),
+    mainImageFile: mainImageFile, // Ahora es un File real o null
+    galleryFiles: galleryFiles,   // Es un Array de Files reales
   });
 
   if (!validatedFields.success) {
@@ -181,61 +197,40 @@ export async function createProduct(prevState: State, formData: FormData): Promi
 
   const { 
     name, price, description, category_id, stock, 
-    is_available, size, color, keywords, mainImageFile, galleryFiles 
+    is_available, size, color, keywords 
   } = validatedFields.data;
 
   const artesano_id = 'a239e0e7-70d2-47f9-83f7-d0a7e33e5850';
-  let main_image_url = '';
   
   try {
-    // 2. Guardar imagen principal (Verificando tipo e instancia)
-    if (mainImageFile instanceof File && mainImageFile.size > 0) {
-      main_image_url = await saveFile(mainImageFile, 'main');
-    }
+    // 3. Guardado de archivos optimizado
+    // Guardamos la principal si existe (Zod ya validó que es obligatoria según tu esquema)
+    const main_image_url = await saveFile(validatedFields.data.mainImageFile as File, 'main');
 
-    // 3. Guardar galería en paralelo (Más eficiente que un for-await)
+    // Guardamos la galería en paralelo
     const gallery_urls = await Promise.all(
-      galleryFiles.map((file) => saveFile(file, 'gallery'))
+      validatedFields.data.galleryFiles.map((file) => saveFile(file, 'gallery'))
     );
 
-    // 4. Inserción en DB
+    // 4. Inserción en DB con tipado correcto para PostgreSQL
     await sql`
       INSERT INTO products (
-        artesano_id, 
-        category_id, 
-        nombre, 
-        descripcion, 
-        precio, 
-        imagen_principal_url, 
-        imagenes_galeria, -- Tipo text[]
-        stock, 
-        is_available,
-        keywords,         -- Tipo text[]
-        size, 
-        color
+        artesano_id, category_id, nombre, descripcion, precio, 
+        imagen_principal_url, imagenes_galeria, stock, is_available,
+        keywords, size, color
       ) VALUES (
-        ${artesano_id}, 
-        ${category_id}, 
-        ${name}, 
-        ${description}, 
-        ${price}, 
-        ${main_image_url}, 
-        ${gallery_urls},   // <--- PASAR ARRAY DIRECTO (sin JSON.stringify)
-        ${stock}, 
-        ${is_available},
-        ${keywords || []}, -- Verifica si tu DB espera un array de Postgres o JSON
-        ${size ?? null}, 
-        ${color ?? null}
+        ${artesano_id}, ${category_id}, ${name}, ${description}, ${price}, 
+        ${main_image_url}, ${gallery_urls}, ${stock}, ${is_available},
+        ${keywords || []}, ${size ?? null}, ${color ?? null}
       )
     `;
   } catch (error) {
-    console.error('Error DB:', error);
+    console.error('Error detallado:', error);
     return {
-      message: 'Error en la base de datos o al subir archivos.',
+      message: 'Error de base de datos: No se pudo crear el producto.',
     };
   }
 
-  // 5. Revalidación y Redirección (Fuera del bloque try/catch)
   revalidatePath('/products');
   redirect('/products');
 }

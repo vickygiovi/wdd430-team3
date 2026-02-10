@@ -9,56 +9,59 @@ export default function Form({ categories }: { categories: Category[] }) {
   const [state, formAction] = useActionState(createProduct, initialState);
 
   interface ProductForm {
-    images: string[]; // Aquí definimos que es un array de strings
-    main_image?: string; // Para la imagen principal, si quieres manejarla por separado
+    images: File[];
+    main_image?: File;
+    previews: string[];
   }
 
   const [form, setForm] = useState<ProductForm>({
     images: [],
+    previews: []
   });
 
+  const [images, setImages] = useState<File[]>([]);
+
+  const [files, setFiles] = useState<File[]>([]);
+
+  // const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   if (!e.target.files) return;
+
+  //   const files = Array.from(e.target.files);
+
+  //   // Generamos las previews
+  //   const newPreviews = files.map(file => URL.createObjectURL(file));
+
+  //   // Guardamos los archivos reales
+  //   setImages(prev => [...prev, ...files]);
+
+  //   // Actualizamos el form solo con las previews
+  //   setForm(prev => ({
+  //     ...prev,
+  //     previews: [...prev.previews, ...newPreviews],
+  //   }));
+  // };
+
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    // Verificamos que existan archivos para evitar errores de nulos
-    if (!e.target.files) return;
-
-    const files = Array.from(e.target.files);
-
-    files.forEach((file) => {
-      const reader = new FileReader();
-
-      reader.onloadend = () => {
-        // Forzamos el tipo a string porque readAsDataURL siempre devuelve un string (o null)
-        const base64String = reader.result as string;
-
-        setForm((prev) => ({
-          ...prev,
-          images: [...prev.images, base64String],
-        }));
-      };
-
-      reader.readAsDataURL(file);
-    });
-  };
-
-  const handleMainImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    // 1. Verificamos que haya un archivo seleccionado
     if (!e.target.files || e.target.files.length === 0) return;
 
-    const file = e.target.files[0]; // Tomamos solo el primer archivo
-    const reader = new FileReader();
+    const file = e.target.files[0];
 
-    reader.onloadend = () => {
-      // 2. Obtenemos el resultado como string (Base64)
-      const base64String = reader.result as string;
+    setFiles(prev => [...prev, file]);
 
-      // 3. Actualizamos el estado apuntando a la propiedad de imagen principal
-      setForm((prev) => ({
-        ...prev,
-        main_image: base64String, // Guardamos el string para la vista previa
-      }));
-    };
+    // limpiar el input para permitir volver a usarlo
+    e.target.value = "";
+  };
 
-    reader.readAsDataURL(file);
+
+  const handleMainImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files?.[0]) return;
+
+    const file = e.target.files[0];
+
+    setForm(prev => ({
+      ...prev,
+      main_image: file,
+    }));
   };
 
   return (
@@ -270,7 +273,7 @@ export default function Form({ categories }: { categories: Category[] }) {
         {/* Vista previa mejorada */}
         {form.main_image && (
           <div className="preview-gallery">
-            <img src={form.main_image} alt="preview" />
+            <img src={URL.createObjectURL(form.main_image)} alt="preview" />
           </div>
         )}
       </div>
@@ -294,19 +297,23 @@ export default function Form({ categories }: { categories: Category[] }) {
         </div>
 
         {/* Vista previa mejorada */}
-        {form.images && form.images.length > 0 && (
+        {images.length > 0 && (
           <div className="preview-gallery">
-            {form.images.map((img, index) => (
+            {images.map((file, index) => (
               <div key={index} className="preview-item">
-                <img src={img} alt={`preview-${index}`} />
+                <img
+                  src={URL.createObjectURL(file)}
+                  alt={`preview-${index}`}
+                />
               </div>
             ))}
           </div>
         )}
 
-        {state.errors?.images && (
+
+        {state.errors?.galleryFiles && (
           <div id="images-error" aria-live="polite" aria-atomic="true">
-            {state.errors.images.map((error: string) => (
+            {state.errors.galleryFiles.map((error: string) => (
               <p className="mt-1 text-sm text-red-500" key={error}>
                 {error}
               </p>
