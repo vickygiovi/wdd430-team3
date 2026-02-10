@@ -42,13 +42,20 @@ const CreateProduct = z.object({
     .number()
     .int("El stock debe ser un número entero")
     .min(0, "El stock no puede ser negativo"),
-  imagen_principal: z
+  mainImageFile: z
     .any()
     .refine((file) => file?.size > 0, "La imagen principal es obligatoria"),
   is_available: z.coerce.boolean(),
   size: z.string().optional(),
   color: z.string().optional(),
   keywords: z.string().optional(),
+  galleryFiles: z
+    .array(z.instanceof(File))
+    .min(1, "Debes subir al menos una imagen para la galería")
+    .refine(
+      (files) => files.every((file) => file.size > 0),
+      "Uno o más archivos están corruptos o vacíos"
+    ),
 });
 
 export type State = {
@@ -59,7 +66,7 @@ export type State = {
     category_id?: string[]; // Nuevo campo para categoría
     images?: string[];      // Opcional, si validas imágenes
     stock?: string[];
-    imagen_principal?: string[];
+    mainImageFile?: string[];
     is_available?: string[];
     size?: string[];
     color?: string[];
@@ -77,71 +84,158 @@ const parseKeywords = (raw: string | null): string[] => {
 };
 
 // CREATE: Nuevo Producto con especificaciones completas
+// export async function createProduct(prevState: State, formData: FormData): Promise<State> {
+//   const validatedFields = CreateProduct.safeParse({
+//     name: formData.get('nombre'),
+//     price: formData.get('precio'),
+//     description: formData.get('descripcion'),
+//     category_id: formData.get('category_id'),
+//     stock: formData.get('stock'),
+//     is_available: formData.get('is_available') === 'on',
+//     size: formData.get('size')?.toString() || null, // Convertir vacío a null
+//     color: formData.get('color')?.toString() || null,
+//     keywords: parseKeywords(formData.get('keywords')?.toString() || ""),
+//     mainImageFile: formData.get('imagen_principal'),
+//     galleryFiles: formData.getAll('imagenes_galeria').filter((entry): entry is File => entry instanceof File && entry.size > 0)
+//   });
+
+//   // Si la validación falla, devolvemos los errores específicos
+//   if (!validatedFields.success) {
+//     return {
+//       errors: validatedFields.error.flatten().fieldErrors,
+//       message: 'Faltan campos. No se pudo crear el producto.',
+//     };
+//   }
+
+//   // Extraemos datos según el esquema
+//   const { name, price, description, category_id, stock, is_available, size, color, keywords, mainImageFile, galleryFiles } = validatedFields.data;
+
+//   const artesano_id = 'a239e0e7-70d2-47f9-83f7-d0a7e33e5850';
+  
+//   // 1. Obtener archivos del FormData
+//   const mainImageFileEntrySQL = mainImageFile as File;
+//   const galleryFilesEntrySQL = galleryFiles as File[]; // Nota el getAll
+
+//   let main_image_url = '';
+//   const gallery_urls: string[] = [];
+
+//   try {
+
+//     // 2. Guardar imagen principal físicamente
+//     if (mainImageFile && mainImageFile.size > 0) {
+//       main_image_url = await saveFile(mainImageFile, 'main');
+//     }
+
+//     // 3. Guardar galería físicamente
+//     for (const file of galleryFiles) {
+//       if (file.size > 0) {
+//         const url = await saveFile(file, 'gallery');
+//         gallery_urls.push(url);
+//       }
+//     }
+
+//     await sql`
+//       INSERT INTO products (
+//         artesano_id, category_id, nombre, descripcion, precio, 
+//         imagen_principal_url, imagenes_galeria, stock, is_available,
+//         keywords, size, color
+//       ) VALUES (
+//         ${artesano_id}, ${category_id}, ${name}, ${description}, ${price}, 
+//         ${main_image_url}, ${gallery_urls}, ${stock}, ${is_available},
+//         ${keywords || []}, ${size ?? null}, ${color ?? null}
+//       )
+//     `;
+//   } catch (error) {
+//     console.error('Error DB:', error);
+//     console.error({ message: 'Error al crear el producto.' });
+//   }
+
+//   revalidatePath('/products');
+//   redirect('/products');
+// }
+
 export async function createProduct(prevState: State, formData: FormData): Promise<State> {
+  // 1. Validación con Zod (Aseguramos tipos numéricos y archivos)
   const validatedFields = CreateProduct.safeParse({
     name: formData.get('nombre'),
-    price: formData.get('precio'),
+    price: Number(formData.get('precio')), // Convertir a número
     description: formData.get('descripcion'),
     category_id: formData.get('category_id'),
-    stock: formData.get('stock'),
-    imagen_principal: formData.get('imagen_principal'),
+    stock: Number(formData.get('stock')), // Convertir a número
     is_available: formData.get('is_available') === 'on',
-    size: formData.get('size')?.toString() || null, // Convertir vacío a null
+    size: formData.get('size')?.toString() || null,
     color: formData.get('color')?.toString() || null,
     keywords: parseKeywords(formData.get('keywords')?.toString() || ""),
+    mainImageFile: formData.get('imagen_principal'),
+    galleryFiles: formData.getAll('imagenes_galeria').filter(
+      (entry): entry is File => entry instanceof File && entry.size > 0
+    ),
   });
 
-  // Si la validación falla, devolvemos los errores específicos
   if (!validatedFields.success) {
     return {
       errors: validatedFields.error.flatten().fieldErrors,
-      message: 'Faltan campos. No se pudo crear el producto.',
+      message: 'Faltan campos o el formato es incorrecto.',
     };
   }
 
-  // Extraemos datos según el esquema
-  const { name, price, description, category_id, stock, is_available, size, color, keywords } = validatedFields.data;
+  const { 
+    name, price, description, category_id, stock, 
+    is_available, size, color, keywords, mainImageFile, galleryFiles 
+  } = validatedFields.data;
 
-  const artesano_id = formData.get('artesano_id') as string;
-  
-  // 1. Obtener archivos del FormData
-  const mainImageFile = formData.get('imagen_principal') as File;
-  const galleryFiles = formData.getAll('imagenes_galeria') as File[]; // Nota el getAll
-
+  const artesano_id = 'a239e0e7-70d2-47f9-83f7-d0a7e33e5850';
   let main_image_url = '';
-  const gallery_urls: string[] = [];
-
+  
   try {
-
-    // 2. Guardar imagen principal físicamente
-    if (mainImageFile && mainImageFile.size > 0) {
+    // 2. Guardar imagen principal (Verificando tipo e instancia)
+    if (mainImageFile instanceof File && mainImageFile.size > 0) {
       main_image_url = await saveFile(mainImageFile, 'main');
     }
 
-    // 3. Guardar galería físicamente
-    for (const file of galleryFiles) {
-      if (file.size > 0) {
-        const url = await saveFile(file, 'gallery');
-        gallery_urls.push(url);
-      }
-    }
+    // 3. Guardar galería en paralelo (Más eficiente que un for-await)
+    const gallery_urls = await Promise.all(
+      galleryFiles.map((file) => saveFile(file, 'gallery'))
+    );
 
+    // 4. Inserción en DB
     await sql`
       INSERT INTO products (
-        artesano_id, category_id, nombre, descripcion, precio, 
-        imagen_principal_url, imagenes_galeria, stock, is_available,
-        keywords, size, color
+        artesano_id, 
+        category_id, 
+        nombre, 
+        descripcion, 
+        precio, 
+        imagen_principal_url, 
+        imagenes_galeria, -- Tipo text[]
+        stock, 
+        is_available,
+        keywords,         -- Tipo text[]
+        size, 
+        color
       ) VALUES (
-        ${artesano_id}, ${category_id}, ${name}, ${description}, ${price}, 
-        ${main_image_url}, ${gallery_urls}, ${stock}, ${is_available},
-        ${keywords || []}, ${size ?? null}, ${color ?? null}
+        ${artesano_id}, 
+        ${category_id}, 
+        ${name}, 
+        ${description}, 
+        ${price}, 
+        ${main_image_url}, 
+        ${gallery_urls},   // <--- PASAR ARRAY DIRECTO (sin JSON.stringify)
+        ${stock}, 
+        ${is_available},
+        ${keywords || []}, -- Verifica si tu DB espera un array de Postgres o JSON
+        ${size ?? null}, 
+        ${color ?? null}
       )
     `;
   } catch (error) {
     console.error('Error DB:', error);
-    console.error({ message: 'Error al crear el producto.' });
+    return {
+      message: 'Error en la base de datos o al subir archivos.',
+    };
   }
 
+  // 5. Revalidación y Redirección (Fuera del bloque try/catch)
   revalidatePath('/products');
   redirect('/products');
 }

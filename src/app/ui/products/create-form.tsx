@@ -253,13 +253,13 @@ export default function Form({ categories }: { categories: Category[] }) {
           />
         </div>
 
-        {state.errors?.imagen_principal && (
+        {state.errors?.mainImageFile && (
           <div
             id="main-image-error"
             aria-live="polite"
             className="error-container"
           >
-            {state.errors.imagen_principal.map((error: string) => (
+            {state.errors.mainImageFile.map((error: string) => (
               <p className="error-text mt-1 text-sm text-red-500" key={error}>
                 {error}
               </p>
@@ -268,9 +268,11 @@ export default function Form({ categories }: { categories: Category[] }) {
         )}
 
         {/* Vista previa mejorada */}
-        <div className="preview-gallery">
-          {form.main_image && <img src={form.main_image} alt="preview" />}
-        </div>
+        {form.main_image && (
+          <div className="preview-gallery">
+            <img src={form.main_image} alt="preview" />
+          </div>
+        )}
       </div>
 
       <div className="form-group">
@@ -292,13 +294,15 @@ export default function Form({ categories }: { categories: Category[] }) {
         </div>
 
         {/* Vista previa mejorada */}
-        <div className="preview-gallery">
-          {form.images.map((img, index) => (
-            <div key={index} className="preview-item">
-              <img src={img} alt="preview" />
-            </div>
-          ))}
-        </div>
+        {form.images && form.images.length > 0 && (
+          <div className="preview-gallery">
+            {form.images.map((img, index) => (
+              <div key={index} className="preview-item">
+                <img src={img} alt={`preview-${index}`} />
+              </div>
+            ))}
+          </div>
+        )}
 
         {state.errors?.images && (
           <div id="images-error" aria-live="polite" aria-atomic="true">
