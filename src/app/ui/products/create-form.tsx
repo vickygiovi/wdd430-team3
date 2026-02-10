@@ -21,35 +21,22 @@ export default function Form({ categories }: { categories: Category[] }) {
 
   const [images, setImages] = useState<File[]>([]);
 
-  const [files, setFiles] = useState<File[]>([]);
-
-  // const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   if (!e.target.files) return;
-
-  //   const files = Array.from(e.target.files);
-
-  //   // Generamos las previews
-  //   const newPreviews = files.map(file => URL.createObjectURL(file));
-
-  //   // Guardamos los archivos reales
-  //   setImages(prev => [...prev, ...files]);
-
-  //   // Actualizamos el form solo con las previews
-  //   setForm(prev => ({
-  //     ...prev,
-  //     previews: [...prev.previews, ...newPreviews],
-  //   }));
-  // };
-
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!e.target.files || e.target.files.length === 0) return;
+    if (!e.target.files) return;
 
-    const file = e.target.files[0];
+    const files = Array.from(e.target.files);
 
-    setFiles(prev => [...prev, file]);
+    // Generamos las previews
+    const newPreviews = files.map(file => URL.createObjectURL(file));
 
-    // limpiar el input para permitir volver a usarlo
-    e.target.value = "";
+    // Guardamos los archivos reales
+    setImages(prev => [...prev, ...files]);
+
+    // Actualizamos el form solo con las previews
+    setForm(prev => ({
+      ...prev,
+      previews: [...prev.previews, ...newPreviews],
+    }));
   };
 
 
