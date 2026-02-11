@@ -3,9 +3,9 @@
     "title": "Meet Our Woodcraft Artisans",
     "slug": "meet-our-woodcraft-artisans",
     "summary": "A behind-the-scenes look at how our woodworkers create handmade pieces.",
-    "content": "Our woodcraft artisans use locally sourced hardwoods and traditional joinery techniques. Each piece is carefully measured, cut, and assembled by hand...",
+    "content": "Our woodcraft artisans use locally sourced hardwoods and traditional joinery techniques. Each piece is carefully measured, cut, and assembled by hand. From selecting the perfect grain to sanding and finishing, every step is executed with precision. Beyond craftsmanship, our artisans infuse their personal touch, resulting in unique furniture and décor items. This dedication ensures that each creation is not only functional but a piece of art that tells a story, lasting for generations and reflecting a commitment to quality, patience, and creativity.",
     "author": "Handcrafted Haven",
-    "image": "/images/woodcraft.jpg",
+    "image": null,
     "tags": ["artisan", "wood", "craft"],
     "published": true,
     "createdAt": "2026-02-01"
@@ -14,11 +14,44 @@
     "title": "Why Handmade Products Last Longer",
     "slug": "why-handmade-products-last-longer",
     "summary": "Quality, materials, and process make a difference.",
-    "content": "Handmade products are built with attention and durability in mind. Unlike mass production, makers focus on material quality and finishing...",
+    "content": "Handmade products are built with attention and durability in mind. Unlike mass production, makers focus on material quality and finishing. Each item undergoes careful inspection at every stage, from raw material selection to the final polish. The emphasis on craftsmanship reduces weak points often found in machine-made products. Additionally, artisans often employ repairable construction techniques, allowing items to be restored or maintained rather than discarded. Choosing handmade means investing in longevity, sustainability, and a personal connection to the item, ensuring it holds value far beyond its initial purchase.",
     "author": "Editorial Team",
-    "image": "/images/handmade.jpg",
+    "image": null,
     "tags": ["quality", "sustainability"],
     "published": true,
     "createdAt": "2026-02-02"
+  },
+  {
+    "title": "The Art of Ceramics: Shaping Clay with Passion",
+    "slug": "the-art-of-ceramics-shaping-clay-with-passion",
+    "summary": "Exploring how ceramicists bring clay to life.",
+    "content": "Ceramic artists transform raw clay into functional and decorative art through skill, patience, and creativity. The process begins with selecting the right type of clay, kneading and conditioning it to remove air bubbles, and then shaping it on a wheel or by hand. Glazing adds both aesthetic appeal and durability, with each coat carefully applied to achieve depth and texture. Firing in a kiln solidifies the work, turning delicate material into enduring masterpieces. Beyond technique, the passion of ceramicists is visible in the unique imperfections and nuances of each piece, making every object a personal expression of creativity and tradition.",
+    "author": "Clay & Co.",
+    "image": null,
+    "tags": ["ceramics", "art", "craft"],
+    "published": true,
+    "createdAt": "2026-02-03"
+  },
+  {
+    "title": "Sustainable Fashion: Clothing with a Conscience",
+    "slug": "sustainable-fashion-clothing-with-a-conscience",
+    "summary": "How artisans and designers are reshaping the fashion industry.",
+    "content": "Sustainable fashion emphasizes ethical production, environmental responsibility, and longevity in clothing. Artisans and designers select eco-friendly fabrics, often organic or recycled, and prioritize processes that minimize waste and chemical use. Every garment is carefully sewn, dyed, and finished to ensure quality and durability. Consumers who choose sustainable fashion support fair labor practices and environmentally conscious methods, contributing to a shift in the global fashion industry. This movement combines style, function, and responsibility, creating garments that are not only beautiful but meaningful, bridging creativity with conscientious living.",
+    "author": "Green Threads",
+    "image": null,
+    "tags": ["fashion", "sustainability", "ethical"],
+    "published": true,
+    "createdAt": "2026-02-04"
+  },
+  {
+    "title": "Mastering Leathercraft: Tools, Techniques, and Tradition",
+    "slug": "mastering-leathercraft-tools-techniques-and-tradition",
+    "summary": "A comprehensive guide to artisanal leatherwork.",
+    "content": "Leathercraft is a centuries-old art that requires precision, skill, and patience. Artisans begin by selecting high-quality hides and preparing them through tanning and conditioning. Cutting, stitching, and tooling transform the raw leather into wallets, belts, bags, and accessories. Each stitch is carefully measured, and edges are burnished to perfection. Techniques such as embossing or carving add personal flair, while traditional methods ensure durability. Beyond the functional aspect, leathercraft embodies history and artistry, allowing craftsmen to express creativity while producing items that are both practical and timeless. Enthusiasts and collectors value these pieces for their meticulous detail, tactile quality, and lasting beauty.",
+    "author": "The Leather Studio",
+    "image": null,
+    "tags": ["leather", "craft", "artisan"],
+    "published": true,
+    "createdAt": "2026-02-05"
   }
 ]
