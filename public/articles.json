@@ -1,0 +1,24 @@
+[
+  {
+    "title": "Meet Our Woodcraft Artisans",
+    "slug": "meet-our-woodcraft-artisans",
+    "summary": "A behind-the-scenes look at how our woodworkers create handmade pieces.",
+    "content": "Our woodcraft artisans use locally sourced hardwoods and traditional joinery techniques. Each piece is carefully measured, cut, and assembled by hand...",
+    "author": "Handcrafted Haven",
+    "image": "/images/woodcraft.jpg",
+    "tags": ["artisan", "wood", "craft"],
+    "published": true,
+    "createdAt": "2026-02-01"
+  },
+  {
+    "title": "Why Handmade Products Last Longer",
+    "slug": "why-handmade-products-last-longer",
+    "summary": "Quality, materials, and process make a difference.",
+    "content": "Handmade products are built with attention and durability in mind. Unlike mass production, makers focus on material quality and finishing...",
+    "author": "Editorial Team",
+    "image": "/images/handmade.jpg",
+    "tags": ["quality", "sustainability"],
+    "published": true,
+    "createdAt": "2026-02-02"
+  }
+]
