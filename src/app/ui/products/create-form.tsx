@@ -2,11 +2,12 @@
 
 import { Category } from "@/app/lib/category-data";
 import { createProduct, State } from "@/app/lib/products-actions";
-import { useActionState, useState } from "react";
+import { useActionState, useState, useTransition } from "react"; // 1. Importar useTransition
 
 export default function Form({ categories }: { categories: Category[] }) {
   const initialState: State = { message: null, errors: {} };
   const [state, formAction] = useActionState(createProduct, initialState);
+  const [isPending, startTransition] = useTransition();
 
   interface ProductForm {
     images: File[];
@@ -20,6 +21,20 @@ export default function Form({ categories }: { categories: Category[] }) {
   });
 
   const [images, setImages] = useState<File[]>([]);
+
+  const removeImage = (index: number) => {
+    // 1. Revocamos la URL para evitar fugas de memoria
+    URL.revokeObjectURL(form.previews[index]);
+
+    // 2. Filtramos el array de archivos reales
+    setImages((prev) => prev.filter((_, i) => i !== index));
+
+    // 3. Filtramos las previews en el estado del form
+    setForm((prev) => ({
+      ...prev,
+      previews: prev.previews.filter((_, i) => i !== index),
+    }));
+  };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) return;
@@ -51,8 +66,28 @@ export default function Form({ categories }: { categories: Category[] }) {
     }));
   };
 
+  function handleSubmit(event: React.FormEvent<HTMLFormElement>): void {
+    event.preventDefault();
+    
+    // Creamos el FormData a partir del formulario actual
+    const formData = new FormData(event.currentTarget);
+
+    // Si tienes archivos en el estado local que NO están en inputs nativos, 
+    // debes agregarlos manualmente aquí:
+    // Por ejemplo, si 'images' (galería) no se está vinculando bien:
+    formData.delete("imagenes_galeria"); // Limpiamos si existe
+    images.forEach((file) => {
+      formData.append("imagenes_galeria", file);
+    });
+
+    // Ejecutamos la acción dentro de una transición
+    startTransition(() => {
+      formAction(formData);
+    });
+  }
+
   return (
-    <form className="create-form" action={formAction}>
+    <form className="create-form" onSubmit={handleSubmit}>
       <div className="form-group">
         <label htmlFor="name">Product Name</label>
         <input id="name" type="text" name="nombre" />
@@ -284,14 +319,23 @@ export default function Form({ categories }: { categories: Category[] }) {
         </div>
 
         {/* Vista previa mejorada */}
-        {images.length > 0 && (
-          <div className="preview-gallery">
-            {images.map((file, index) => (
-              <div key={index} className="preview-item">
+        {form.previews.length > 0 && (
+          <div className="preview-gallery grid grid-cols-3 gap-2 mt-4">
+            {form.previews.map((url, index) => (
+              <div key={url} className="preview-item relative group">
                 <img
-                  src={URL.createObjectURL(file)}
+                  src={url}
                   alt={`preview-${index}`}
+                  className="rounded-lg object-cover w-full h-32"
                 />
+                <button
+                  type="button" // IMPORTANTE: evitar que haga submit
+                  onClick={() => removeImage(index)}
+                  className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center hover:bg-red-700 transition-colors shadow-lg"
+                  title="Remove image"
+                >
+                  &times;
+                </button>
               </div>
             ))}
           </div>
