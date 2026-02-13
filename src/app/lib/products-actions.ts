@@ -355,7 +355,7 @@ export async function updateProduct( id: string, prevState: StateUpdatingProduct
           color = ${color ?? null},
           keywords = ${keywords || []},
           imagen_principal_url = ${main_image_url},
-          imagenes_galeria = ${gallery_urls},
+          imagenes_galeria = imagenes_galeria || ${gallery_urls},
           updated_at = now()
         WHERE id = ${id}
       `;
