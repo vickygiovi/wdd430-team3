@@ -4,9 +4,12 @@ import Card from "../navigation/card";
 import Filters from "./filters/filters";
 import "./products.css";
 import "../index.css";
+import { fetchProducts } from "../lib/products-data";
 /* import Footer from "../navigation/footer"; */
 
-const products = [
+const products = await fetchProducts();
+
+const productsMock = [
     {
       id: 1,
       name: "Hand-Thrown Ceramic Mug",

@@ -16,13 +16,16 @@ export interface Product {
   color?: string,
   keywords?: string[],
   main_image: string,
-  imagenes_galeria: string[]
+  imagenes_galeria: string[],
+  artesano_id?: string,
+  category_name?: string,
+  artisan_name: string
 }
 
 // READ: Obtener todos los productos con el nombre de su categoría y nuevos campos
 export async function fetchProducts() {
   try {
-    const products = await sql`
+    const data = await sql`
       SELECT 
         p.*, 
         c.nombre as categoria_nombre 
@@ -31,7 +34,25 @@ export async function fetchProducts() {
       ORDER BY p.created_at DESC
     `;
     // Al usar p.* ya incluimos automáticamente keywords, size y color
-    return products;
+    return data.map(row => ({
+      id: row.id,
+      name: row.nombre,             // Ajusta 'nombre' si en tu DB se llama 'name'
+      price: parseFloat(row.precio), // Asegura que sea número (Postgres suele devolver decimales como string)
+      stock: parseInt(row.stock),   
+      available: row.is_available,  // Ajusta al nombre exacto de tu columna
+      description: row.descripcion, 
+      category_id: row.category_id,
+      
+      // Campos opcionales (si son null en DB, pasan como undefined o se mantienen)
+      size: row.size ?? undefined,
+      color: row.color ?? undefined,
+      keywords: row.keywords || [], // Si es null, devuelve un array vacío para evitar errores
+      
+      // Imágenes
+      main_image: row.imagen_principal_url,
+      imagenes_galeria: row.imagenes_galeria || [],
+      artesano_id: row.artesano_id
+    }));
   } catch (error) {
     console.error('Error:', error);
     throw new Error('No se pudieron cargar los productos.');
@@ -44,7 +65,16 @@ export async function fetchProductById(id: string) {
   console.log("Buscando ID:", id);
 
   try {
-    const data = await sql`SELECT * FROM products WHERE id = ${id}`;
+    const data = await sql`
+      SELECT 
+      p.*, 
+      c.nombre AS category_name, 
+      a.username AS artisan_name
+      FROM products p
+      LEFT JOIN categories c ON p.category_id = c.id
+      LEFT JOIN users a ON p.artesano_id = a.id
+      WHERE p.id = ${id}
+    `;
 
     const products = data.map(row => ({
       id: row.id,
@@ -62,7 +92,9 @@ export async function fetchProductById(id: string) {
       
       // Imágenes
       main_image: row.imagen_principal_url,
-      imagenes_galeria: row.imagenes_galeria || []
+      imagenes_galeria: row.imagenes_galeria || [],
+      category_name: row.category_name,
+      artisan_name: row.artisan_name
     }));
     
     return products[0];
