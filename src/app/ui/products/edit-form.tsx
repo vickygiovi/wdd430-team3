@@ -175,7 +175,7 @@ export default function Form({ categories, product }: { categories: Category[], 
 
       <div className="form-group">
         <label htmlFor="description">Description</label>
-        <textarea id="description" name="descripcion" value={product.description}/>
+        <textarea id="description" name="descripcion" defaultValue={product.description}/>
 
         {state.errors?.description && (
           <div
