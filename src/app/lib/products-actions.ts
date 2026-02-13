@@ -123,6 +123,11 @@ export type StateUpdatingProduct = {
   message?: string | null;
 };
 
+export type StateDeletingProduct = {
+  message?: string | null;
+  error?: boolean;
+};
+
 /**
  * Procesa el string de keywords para convertirlo en un array limpio
  */
@@ -282,7 +287,7 @@ export async function createProduct(prevState: State, formData: FormData): Promi
 }
 
 // UPDATE: Actualizar producto existente
-export async function updateProduct( id: string, prevState: State, formData: FormData): Promise<State> {
+export async function updateProduct( id: string, prevState: StateUpdatingProduct, formData: FormData): Promise<State> {
 
   console.log(
     'imagenes_galeria ->',
@@ -404,11 +409,14 @@ export async function updateProduct( id: string, prevState: State, formData: For
 }
 
 // DELETE: Borrado físico del producto
-export async function deleteProduct(id: string) {
+export async function deleteProduct(id: string, prevState: StateDeletingProduct) {
   try {
     await sql`DELETE FROM products WHERE id = ${id}`;
     revalidatePath('/products');
   } catch (error) {
     console.error({ message: 'No se pudo eliminar el producto.', error });
+    return { message: 'Database Error: Failed to Delete Product', error: true };
   }
+
+  redirect('/products');
 }
