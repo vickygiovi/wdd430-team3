@@ -97,6 +97,9 @@ export default async function ProductDetailPage({
             <p>
               <strong>Size:</strong> {product.size || "N/A"}
             </p>
+            <p>
+              <strong>Color:</strong> {product.color || "N/A"}
+            </p>
           </div>
 
           <div className="keywords-section">
