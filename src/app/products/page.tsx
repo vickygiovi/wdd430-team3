@@ -1,9 +1,14 @@
 import Image from "next/image";
 import { Plus } from "lucide-react";
 import Link from "next/link";
+import { fetchProductsByArtesano } from "../lib/products-data";
+import './productimages.css';
 
-export default function Page() {
-  const products = [
+export default async function Page() {
+
+  const products = await fetchProductsByArtesano('a239e0e7-70d2-47f9-83f7-d0a7e33e5850');
+
+  const productsMock = [
     {
       id: 1,
       name: "Hand-Thrown Ceramic Mug",
@@ -97,27 +102,27 @@ export default function Page() {
             {/* Contenedor de imagen con efecto de escala */}
             <div className="overflow-hidden rounded-md mb-4 bg-gray-50">
               <Image
-                src={product.image}
-                alt={product.name}
+                src={product.imagen_principal_url}
+                alt={product.nombre}
                 width={250}
                 height={250}
-                className="object-cover transition-transform duration-300 group-hover:scale-110"
+                className="object-cover transition-transform duration-300 group-hover:scale-110 imagen"
               />
             </div>
 
             {/* Título: ahora sí se verá grande */}
             <h3 className="text-xl font-bold text-gray-800 mb-2 leading-tight">
-              {product.name}
+              {product.nombre}
             </h3>
 
             {/* Precio con un estilo más artesanal */}
             <p className="text-emerald-700 font-semibold text-lg">
-              ${product.price.toFixed(2)}
+              ${Number(product.precio).toFixed(2)}
             </p>
 
             {/* Botón opcional para mejorar el CTA */}
 
-            <Link
+            {/* <Link
               href={`/products/${product.id}/edit`}
               className="mt-4 w-full py-2 bg-gray-900 text-white text-sm rounded hover:bg-gray-700 transition-colors"
             >
@@ -125,6 +130,30 @@ export default function Page() {
                 Edit Product
               </button>
             </Link>
+            <Link
+              href={`/products/${product.id}/edit`}
+              className="mt-4 w-full py-2 bg-gray-900 text-white text-sm rounded hover:bg-gray-700 transition-colors"
+            >
+              <button>
+                Delete Product
+              </button>
+            </Link> */}
+
+            <div className="flex gap-2 mt-4 w-full"> 
+              <Link
+                href={`/products/${product.id}/edit`}
+                className="flex-1 py-2 bg-gray-900 text-white text-sm rounded hover:bg-gray-700 transition-colors text-center"
+              >
+                Edit Product
+              </Link>
+              
+              <Link
+                href={`/products/${product.id}/delete`} // O la ruta que maneje el borrado
+                className="flex-1 py-2 bg-red-600 text-white text-sm rounded hover:bg-red-700 transition-colors text-center btn-products"
+              >
+                Delete Product
+              </Link>
+            </div>
           </article>
         ))}
       </section>
