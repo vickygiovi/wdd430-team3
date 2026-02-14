@@ -180,12 +180,10 @@ export default async function Page() {
           GRID DE HISTORIAS
       ========================== */}
         <section className="add-story">
-            <h1 className="text-3xl font-bold">My Stories</h1>
-            <Link
-            href="/products/create"
-            >
+          <h1 className="text-3xl font-bold">My Stories</h1>
+          <Link href="/products/create">
             <button className="btn btn-newproduct">Add New Story</button>
-            </Link>
+          </Link>
         </section>
 
         <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
@@ -193,9 +191,9 @@ export default async function Page() {
             <article
               key={article.id}
               style={{
-                ...styles.article,      // Tus estilos actuales
-                position: 'relative',   // Necesario para el z-index
-                cursor: 'pointer'       // Indica que se puede hacer clic
+                ...styles.article, // Tus estilos actuales
+                position: "relative", // Necesario para el z-index
+                cursor: "pointer", // Indica que se puede hacer clic
               }}
               className="card-hover-effect"
             >
@@ -288,6 +286,21 @@ export default async function Page() {
                   </span>
                 </div>
               </div>
+              <div className="flex gap-2 mt-4 w-full"> 
+                <Link
+                    href={"#"}
+                    className="flex-1 py-2 bg-gray-900 text-white text-sm rounded hover:bg-gray-700 transition-colors text-center"
+                >
+                    Edit Story
+                </Link>
+                
+                <Link
+                    href={"#"} // O la ruta que maneje el borrado
+                    className="flex-1 py-2 bg-red-600 text-white text-sm rounded hover:bg-red-700 transition-colors text-center btn-products"
+                >
+                    Delete Story
+                </Link>
+                </div>
             </article>
           ))}
         </section>
