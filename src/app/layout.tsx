@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import "./index.css";
 import Image from "next/image";
 import { Twitter, Instagram, Youtube, Linkedin } from 'lucide-react';
 import Link from 'next/link';
