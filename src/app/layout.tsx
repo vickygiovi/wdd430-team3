@@ -41,8 +41,8 @@ export default function RootLayout({
 
           <ul>
             <li><Link href="/catalog">Browse Catalog</Link></li>
-            <li><a href="#">My Ratings</a></li>
-            <li><a href="#">My Written Reviews</a></li>
+            <li><Link href="/articles">Stories</Link></li>
+            <li><a href="#">My Reviews</a></li>
             <li><a href="#">Contact</a></li>
           </ul>
 
@@ -50,7 +50,11 @@ export default function RootLayout({
             <button className="btn btn-outline">Sign in</button>
             <button className="btn btn-solid">Register</button>
             <button className="btn btn-profile">My Profile</button>
-            <button className="btn btn-stories">My Stories</button>
+            <Link
+              href="/mystories"
+            >
+              <button className="btn btn-stories">My Stories</button>
+            </Link>
             <Link
               href="/products"
             >
@@ -59,7 +63,9 @@ export default function RootLayout({
           </div>
         </nav>
       </header>
-      {children}
+      <main className="flex-grow w-full">
+        {children}
+      </main>
       {/* =========================
           FOOTER
       ========================== */}
