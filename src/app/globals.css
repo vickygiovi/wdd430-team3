@@ -42,3 +42,24 @@ body {
   transform: translateY(-2px); /* Un pequeño salto hacia arriba */
   box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2) !important;
 }
+
+/* Definición del efecto de levante */
+.card-hover-effect {
+  /* Propiedades base */
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), 
+              box-shadow 0.4s ease;
+  backface-visibility: hidden; /* Evita parpadeos en algunos navegadores */
+}
+
+/* Estado al pasar el mouse */
+.card-hover-effect:hover {
+  transform: translateY(-12px); /* El "levante" */
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15); /* Sombra de profundidad */
+  z-index: 10; /* Asegura que la tarjeta esté por encima de las otras al subir */
+}
+
+/* Opcional: Si quieres que la imagen también reaccione */
+.card-hover-effect:hover img {
+  transform: scale(1.05);
+  transition: transform 0.6s ease;
+}

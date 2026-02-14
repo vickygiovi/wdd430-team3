@@ -294,60 +294,105 @@ export default async function Page() {
 
         <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
           {rest.map((article) => (
-            <article key={article.id} style={styles.article} className="card-hover-effect">
-  {/* Imagen */}
-  <Link href={`/articles/${article.id}`} style={styles.imageWrapper}>
-    <Image
-      src={article.imagen_url}
-      alt={article.titulo}
-      fill
-      className="object-cover transition-transform duration-500 hover:scale-110"
-    />
-  </Link>
+            <article
+              key={article.id}
+              style={{
+                ...styles.article, // Tus estilos actuales
+                position: "relative", // Necesario para el z-index
+                cursor: "pointer", // Indica que se puede hacer clic
+              }}
+              className="card-hover-effect"
+            >
+              {/* Imagen */}
+              <Link
+                href={`/articles/${article.id}`}
+                style={styles.imageWrapper}
+              >
+                <Image
+                  src={article.imagen_url}
+                  alt={article.titulo}
+                  fill
+                  className="object-cover transition-transform duration-500 hover:scale-110"
+                />
+              </Link>
 
-  <div style={styles.body}>
-    {/* Tags */}
-    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '16px' }}>
-      {article.tags.map((tag) => (
-        <span key={tag} style={styles.tag}>
-          {tag}
-        </span>
-      ))}
-    </div>
+              <div style={styles.body}>
+                {/* Tags */}
+                <div
+                  style={{
+                    display: "flex",
+                    flexWrap: "wrap",
+                    gap: "8px",
+                    marginBottom: "16px",
+                  }}
+                >
+                  {article.tags.map((tag) => (
+                    <span key={tag} style={styles.tag}>
+                      {tag}
+                    </span>
+                  ))}
+                </div>
 
-    {/* Título */}
-    <h2 style={styles.titulo}>
-      <Link href={`/articles/${article.id}`} style={{ color: 'inherit', textDecoration: 'none' }}>
-        {article.titulo}
-      </Link>
-    </h2>
+                {/* Título */}
+                <h2 style={styles.titulo}>
+                  <Link
+                    href={`/articles/${article.id}`}
+                    style={{ color: "inherit", textDecoration: "none" }}
+                  >
+                    {article.titulo}
+                  </Link>
+                </h2>
 
-    {/* Contenido */}
-    <p style={styles.contenidoCard}>
-      {article.contenido}
-    </p>
+                {/* Contenido */}
+                <p style={styles.contenidoCard}>{article.contenido}</p>
 
-    {/* Footer */}
-    <div style={styles.footer}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-        <div style={{ position: 'relative', width: '32px', height: '32px', borderRadius: '50%', overflow: 'hidden' }}>
-          <Image
-            src={article.avatar_url}
-            alt={article.full_name}
-            fill
-            className="object-cover"
-          />
-        </div>
-        <span style={{ fontSize: '12px', fontWeight: 500, color: '#334155' }}>
-          {article.full_name}
-        </span>
-      </div>
-      <span style={{ fontSize: '10px', color: '#94a3b8', fontFamily: 'monospace' }}>
-        {new Date(article.created_at).toLocaleDateString()}
-      </span>
-    </div>
-  </div>
-</article>
+                {/* Footer */}
+                <div style={styles.footer}>
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "12px",
+                    }}
+                  >
+                    <div
+                      style={{
+                        position: "relative",
+                        width: "32px",
+                        height: "32px",
+                        borderRadius: "50%",
+                        overflow: "hidden",
+                      }}
+                    >
+                      <Image
+                        src={article.avatar_url}
+                        alt={article.full_name}
+                        fill
+                        className="object-cover"
+                      />
+                    </div>
+                    <span
+                      style={{
+                        fontSize: "12px",
+                        fontWeight: 500,
+                        color: "#334155",
+                      }}
+                    >
+                      {article.full_name}
+                    </span>
+                  </div>
+                  <span
+                    style={{
+                      fontSize: "10px",
+                      color: "#94a3b8",
+                      fontFamily: "monospace",
+                    }}
+                  >
+                    {new Date(article.created_at).toLocaleDateString()}
+                  </span>
+                </div>
+              </div>
+            </article>
           ))}
         </section>
       </main>

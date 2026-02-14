@@ -395,3 +395,11 @@ footer {
   max-width: 1200px;
   margin: 0 auto;
 }
+
+.add-story {
+  display: flex;
+  justify-content: space-between;
+  padding-top: 40px;
+  margin: 0 auto;
+  margin-bottom: 30px;
+}
