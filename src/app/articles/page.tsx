@@ -177,7 +177,7 @@ export default async function Page() {
 
   return (
     <div className="w-full flex justify-center bg-slate-50">
-      <main className="max-w-7xl mx-auto">
+      <main style={{paddingTop: "30px", paddingBottom: "30px"}} className="max-w-7xl mx-auto">
         {/* =========================
           FEATURED ARTICLE (Hero)
       ========================== */}

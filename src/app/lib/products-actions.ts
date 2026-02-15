@@ -331,6 +331,8 @@ export async function updateProduct( id: string, prevState: StateUpdatingProduct
     is_available, size, color, keywords 
   } = validatedFields.data;
 
+  const artesano_id_sesion = 'a239e0e7-70d2-47f9-83f7-d0a7e33e5850';
+
   try {
     // 3. Guardado de archivos optimizado
     // Guardamos la principal si existe (Zod ya validó que es obligatoria según tu esquema)
@@ -342,7 +344,7 @@ export async function updateProduct( id: string, prevState: StateUpdatingProduct
     );
 
     // 4. Inserción en DB con tipado correcto para PostgreSQL
-      await sql`
+      const result = await sql`
         UPDATE products
         SET 
           nombre = ${name},
@@ -358,7 +360,15 @@ export async function updateProduct( id: string, prevState: StateUpdatingProduct
           imagenes_galeria = imagenes_galeria || ${gallery_urls},
           updated_at = now()
         WHERE id = ${id}
+        AND artesano_id = ${artesano_id_sesion}
+        RETURNING id
       `;
+
+      if (result.length === 0) {
+        return {
+          message: 'No tienes permiso para editar este producto o el producto no existe.',
+        };
+      }
     } catch (error) {
       console.error({ message: 'Error al actualizar el producto.', error });
       return {
@@ -410,8 +420,18 @@ export async function updateProduct( id: string, prevState: StateUpdatingProduct
 
 // DELETE: Borrado físico del producto
 export async function deleteProduct(id: string, prevState: StateDeletingProduct) {
+  const artesano_id_sesion = 'a239e0e7-70d2-47f9-83f7-d0a7e33e5850';
+
   try {
-    await sql`DELETE FROM products WHERE id = ${id}`;
+    const result = await sql`DELETE FROM products WHERE id = ${id} AND artesano_id = ${artesano_id_sesion} RETURNING id`;
+
+    if (result.length === 0) {
+      return { 
+        message: 'No tienes permiso para eliminar este producto o ya no existe.',
+        error: true 
+      };
+    }
+    
     revalidatePath('/products');
   } catch (error) {
     console.error({ message: 'No se pudo eliminar el producto.', error });

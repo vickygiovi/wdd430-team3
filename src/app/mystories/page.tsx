@@ -175,7 +175,7 @@ export default async function Page() {
 
   return (
     <div className="w-full flex justify-center bg-slate-50">
-      <main className="max-w-7xl mx-auto">
+      <main style={{paddingBottom: "30px"}} className="max-w-7xl mx-auto">
         {/* =========================
           GRID DE HISTORIAS
       ========================== */}
