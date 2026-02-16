@@ -2,6 +2,7 @@ import { Article } from '@/app/lib/definitions';
 import { fetchStoryById } from '@/app/lib/stories-data';
 import Image from 'next/image';
 import '../articles.css';
+import Likes from '../../ui/stories/like-story'
 
 const YouTubeEmbed = ({ embedId }: { embedId: string }) => {
     const embedUrl = getYouTubeEmbedUrl(embedId);
@@ -88,12 +89,7 @@ export default async function ArticlePage({
     </section>
 
     {/* Botón de Likes */}
-    <footer className="blog-footer">
-      <button className="like-button">
-        <span className="heart-icon">❤️</span>
-        <span className="like-text">Inspirado ({article.likes_count})</span>
-      </button>
-    </footer>
+    <Likes likes_count={article.likes_count} id={article.id}/>
   </main>
 );
 }

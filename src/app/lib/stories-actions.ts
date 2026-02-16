@@ -3,6 +3,7 @@
 import postgres from 'postgres';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
+import type { Sql } from "postgres";
 
 const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
 
@@ -70,11 +71,20 @@ export async function deleteStory(id: string) {
 }
 
 // EXTRA: Like a una historia
-export async function likeStory(id: string) {
+export async function likeStory(id: string, prevState: StateLikes) {
   try {
     await sql`UPDATE stories SET likes_count = likes_count + 1 WHERE id = ${id}`;
-    revalidatePath('/stories');
+    revalidatePath('/articles/' + id);
+
+    return { ...prevState, success: true };
   } catch (error) {
     console.error(error);
+    
+    return prevState;
   }
 }
+
+export type StateLikes = {
+  message?: string | null;
+  error?: boolean;
+};
