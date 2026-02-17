@@ -4,10 +4,13 @@ import Card from "../navigation/card";
 import Filters from "./filters/filters";
 import "./products.css";
 import "../index.css";
-import { fetchProducts } from "../lib/products-data";
+import { fetchFilteredProducts, fetchProducts } from "../lib/products-data";
+import SearchInput from "../ui/search";
+import { Category, fetchCategories } from "../lib/category-data";
 /* import Footer from "../navigation/footer"; */
 
 const products = await fetchProducts();
+const categories: Category[] = await fetchCategories();
 
 const productsMock = [
     {
@@ -84,18 +87,69 @@ const productsMock = [
     },
   ];
 
-export default function ProductsPage() {
+export default async function ProductsPage({
+  searchParams,
+}: {
+  searchParams?: {
+    query?: string;
+    sortBy?: string;
+    maxPrice?: string;
+    minPrice?: string;
+    color?: string;
+    categories?: string;
+    keyword?: string,
+    size?: string,
+
+    // ... otros filtros
+  };
+}) {
+  const sParams = await searchParams;
+
+  const query = sParams?.query || '';
+  const sortBy = sParams?.sortBy || 'date';
+  const maxPrice = Number(sParams?.maxPrice) || undefined;
+  const minPrice = Number(sParams?.minPrice) || undefined;
+  const color = sParams?.color || undefined;
+  const categoriesArray = sParams?.categories?.split(',').filter(Boolean) || [];
+  
+  // 1. Obtenemos el valor o un string vacío si es undefined/null
+  const keywordString = sParams?.keyword || "";
+
+  // 2. Ahora TypeScript sabe que keywordString es SIEMPRE un string
+  const keywordArray = keywordString.split(',').filter(Boolean);
+
+  const size = sParams?.size || undefined;
+
+  // categoryIds,
+  // minPrice,
+  // maxPrice,
+  // keyword,
+  // size,
+  // color,
+  // sortBy
+
+  const products = await fetchFilteredProducts({
+    categoryIds: categoriesArray,
+    minPrice: minPrice,
+    maxPrice: maxPrice,
+    keyword: keywordString,
+    size: size,
+    color: color,
+    sortBy: sortBy,
+    searchName: query
+  });
+
   return (
     <>
       {/* <Navbar /> */}
 
       <main className="products-layout">
-        <Sidebar />
+        <Sidebar categories={categories}/>
 
         <section className="products-content">
           <div className="products-toolbar">
             <div className="search-bar">
-              <input type="text" placeholder="Search products..." />
+              <SearchInput placeholder="Search products..."/>
             </div>
             <Filters />
             

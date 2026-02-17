@@ -181,7 +181,7 @@ export default async function Page() {
       ========================== */}
         <section className="add-story">
           <h1 className="text-3xl font-bold">My Stories</h1>
-          <Link href="/products/create">
+          <Link href="/mystories/create">
             <button className="btn btn-newproduct">Add New Story</button>
           </Link>
         </section>
@@ -288,7 +288,7 @@ export default async function Page() {
               </div>
               <div className="flex gap-2 mt-4 w-full"> 
                 <Link
-                    href={"#"}
+                    href={`/mystories/${article.id}/edit`}
                     className="flex-1 py-2 bg-gray-900 text-white text-sm rounded hover:bg-gray-700 transition-colors text-center"
                 >
                     Edit Story

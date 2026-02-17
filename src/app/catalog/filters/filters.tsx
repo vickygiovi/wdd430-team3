@@ -1,27 +1,45 @@
 'use client'
 
-import { useState } from "react";
+import { useSearchParams, usePathname, useRouter } from 'next/navigation';
 import "./filters.css";
 
-// Definimos los filtros fuera del componente para que el código sea más limpio
-const FILTERS = ["New", "Price ascending", "Price descending", "Rating"];
+// Mapeamos el nombre visual al valor que espera tu función SQL
+const FILTERS = [
+  { label: "New", value: "date" },
+  { label: "Price ascending", value: "price_asc" },
+  { label: "Price descending", value: "price_desc" }
+];
 
 export default function Filters() {
-  // Estado para rastrear cuál botón está activo (por defecto el primero)
-  const [activeFilter, setActiveFilter] = useState("New");
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
+  const { replace } = useRouter();
+
+  // El "activeFilter" ahora viene directamente de la URL (o 'date' por defecto)
+  const currentSort = searchParams.get('sortBy') || 'date';
+
+  const handleFilterClick = (value: string) => {
+    const params = new URLSearchParams(searchParams);
+    
+    // Seteamos el valor y reseteamos página para evitar resultados vacíos
+    params.set('sortBy', value);
+    params.set('page', '1');
+
+    replace(`${pathname}?${params.toString()}`);
+  };
 
   return (
-      <div className="filters">
-        {FILTERS.map((filter) => (
-          <button
-            key={filter}
-            // Si el nombre del filtro coincide con el estado, aplicamos la clase 'active'
-            className={activeFilter === filter ? "active" : ""}
-            onClick={() => setActiveFilter(filter)}
-          >
-            {filter}
-          </button>
-        ))}
-      </div>
+    <div className="filters">
+      {FILTERS.map((filter) => (
+        <button
+          key={filter.value}
+          // Comparamos el valor de la URL para saber cuál resaltar
+          className={currentSort === filter.value ? "active" : ""}
+          onClick={() => handleFilterClick(filter.value)}
+        >
+          {filter.label}
+        </button>
+      ))}
+    </div>
   );
 }

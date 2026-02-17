@@ -395,3 +395,155 @@ Product Details Page
     height: 300px;
   }
 }
+
+/*REVIEW STYLES*/
+
+/* Contenedor de la sección completa */
+.reviews-section {
+  margin-top: 3rem;
+  padding: 2rem;
+  background: #ffffff;
+  border-radius: 2rem;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+}
+
+.reviews-title {
+  font-size: 1.8rem;
+  font-weight: 800;
+  margin-bottom: 1.5rem;
+  color: #1e293b;
+}
+
+/* Resumen rápido */
+.reviews-summary {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.average-rating {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #f59e0b; /* Color ámbar/oro */
+}
+
+/* Lista de reviews */
+.reviews-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.review-item {
+  padding: 1.5rem;
+  background: #f8fafc;
+  border-radius: 1.2rem;
+  border: 1px solid #f1f5f9;
+}
+
+.review-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.8rem;
+}
+
+.review-stars {
+  letter-spacing: 2px;
+}
+
+.review-date {
+  font-size: 0.85rem;
+  color: #94a3b8;
+}
+
+.review-comment {
+  font-size: 1rem;
+  color: #475569;
+  line-height: 1.5;
+  margin-bottom: 0.5rem;
+}
+
+.review-user {
+  font-size: 0.8rem;
+  font-weight: bold;
+  color: #6366f1;
+}
+
+/*REVIEWS*/
+
+/* Contenedor principal del formulario */
+.add-review-form {
+  background-color: #f9f9f9;
+  padding: 1.5rem;
+  border-radius: 12px;
+  margin: 2rem 0;
+  border: 1px solid #eee;
+}
+
+.add-review-form h3 {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  font-size: 1.25rem;
+  color: #333;
+}
+
+/* Espaciado de los grupos de input */
+.rating-input, .comment-input {
+  margin-bottom: 1.2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.rating-input label {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: #555;
+}
+
+/* Estilo para el Select y el Textarea */
+.add-review-form select,
+.add-review-form textarea {
+  width: 100%;
+  padding: 0.8rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-family: inherit; /* Mantiene la fuente del resto de la web */
+  background-color: #fff;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  outline: none;
+}
+
+/* Efecto al hacer clic o focus */
+.add-review-form select:focus,
+.add-review-form textarea:focus {
+  border-color: #0070f3; /* Cambia al color principal de tu marca */
+  box-shadow: 0 0 0 3px rgba(0, 112, 243, 0.1);
+}
+
+/* Ajustes específicos para el textarea */
+.add-review-form textarea {
+  resize: vertical; /* Permite al usuario agrandarlo hacia abajo pero no hacia los lados */
+  min-height: 100px;
+}
+
+/* Ajustes para el botón dentro del formulario */
+.add-review-form .create-button {
+  width: 100%; /* Opcional: que ocupe todo el ancho en móviles */
+  cursor: pointer;
+  padding: 0.8rem 1.5rem;
+  font-weight: 600;
+  /* Reutiliza tus estilos de .create-button, solo añadimos un margen superior */
+  margin-top: 0.5rem;
+}
+
+/* Responsivo: Si la pantalla es grande, el botón puede no ser full width */
+@media (min-width: 768px) {
+  .add-review-form .create-button {
+    width: auto;
+  }
+}

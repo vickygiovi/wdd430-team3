@@ -49,7 +49,11 @@ export default function RootLayout({
           <div className="nav-actions">
             <button className="btn btn-outline">Sign in</button>
             <button className="btn btn-solid">Register</button>
-            <button className="btn btn-profile">My Profile</button>
+            <Link
+              href="/profile"
+            >
+              <button className="btn btn-profile">My Profile</button>
+            </Link>
             <Link
               href="/mystories"
             >

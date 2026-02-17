@@ -21,6 +21,23 @@ export interface Product {
   category_name?: string,
   artisan_name: string
 }
+// interface ProductFiltered {
+//   id: string;
+//   artesano_id: string;
+//   nombre: string;
+//   descripcion: string;
+//   precio: number | string;
+//   imagen_principal: string; // Nombre real en tu DDL
+//   imagenes_galeri: string[]; // Nombre real en tu DDL
+//   stock: number;
+//   is_available: boolean;
+//   category_id: string;
+//   keywords: string[];
+//   size: string | null;
+//   color: string | null;
+//   categoria_nombre: string; // Del LEFT JOIN
+//   artisan_name?: string; // Asegúrate de tener este campo en el SELECT o JOIN
+// }
 
 // READ: Obtener todos los productos con el nombre de su categoría y nuevos campos
 export async function fetchProducts() {
@@ -171,37 +188,91 @@ export async function fetchProductsByArtesano(artesanoId: string) {
 }
 
 export async function fetchFilteredProducts({
-  categoryId,
+  categoryIds,
   minPrice,
   maxPrice,
   keyword,
   size,
   color,
+  sortBy, // Nuevo parámetro: 'date', 'price_asc', 'price_desc'
+  searchName,
 }: {
-  categoryId?: string;
+  categoryIds?: string | string[];
   minPrice?: number;
   maxPrice?: number;
   keyword?: string;
   size?: string;
   color?: string;
+  sortBy?: string; // Agregamos el tipo aquí
+  searchName?: string;
 }) {
   try {
-    // Iniciamos la consulta base
+
+    let finalIds: string[] = [];
+    
+    if (categoryIds) {
+      if (Array.isArray(categoryIds)) {
+        // Si ya es un array, nos aseguramos de que no haya strings con comas adentro
+        finalIds = categoryIds.flatMap(id => id.split(',')).filter(Boolean);
+      } else if (typeof categoryIds === 'string') {
+        // Si es un string "id1,id2", lo rompemos en un array real
+        finalIds = categoryIds.split(',').filter(Boolean);
+      }
+    }
+
+    // Eliminamos duplicados por seguridad
+    finalIds = [...new Set(finalIds)];
+
+    console.log("finalids", finalIds)
+
+    // Definimos el mapeo de ordenamiento por seguridad
+    let orderByClause = sql`ORDER BY p.created_at DESC`; // Orden por defecto
+
+    if (sortBy === 'price_asc') {
+      orderByClause = sql`ORDER BY p.precio ASC`;
+    } else if (sortBy === 'price_desc') {
+      orderByClause = sql`ORDER BY p.precio DESC`;
+    } else if (sortBy === 'date_asc') {
+      orderByClause = sql`ORDER BY p.created_at ASC`;
+    }
+
     const products = await sql`
       SELECT p.*, c.nombre as categoria_nombre 
       FROM products p
       LEFT JOIN categories c ON p.category_id = c.id
       WHERE 1=1
-      ${categoryId ? sql`AND p.category_id = ${categoryId}` : sql``}
+      ${
+        finalIds.length > 0 
+          ? sql`AND p.category_id IN ${sql(finalIds)}` // Fíjate: IN ${sql(finalIds)} sin paréntesis manuales
+          : sql``
+      }
       ${minPrice ? sql`AND p.precio >= ${minPrice}` : sql``}
       ${maxPrice ? sql`AND p.precio <= ${maxPrice}` : sql``}
       ${size ? sql`AND p.size = ${size}` : sql``}
       ${color ? sql`AND p.color = ${color}` : sql``}
+      ${
+        searchName 
+          ? sql`AND p.nombre ILIKE ${'%' + searchName + '%'}` 
+          : sql``
+      }
       ${keyword ? sql`AND ${keyword} = ANY(p.keywords)` : sql``}
-      ORDER BY p.created_at DESC
+      ${orderByClause}
     `;
 
-    return products;
+    return products.map((row) => ({
+      id: row.id,
+      name: row.nombre,
+      price: Number(row.precio) || 0,
+      description: row.descripcion || "",
+      main_image: row.imagen_principal_url, // Ajustado según DDL
+      imagenes_galeria: row.imagenes_galeria || [], // Ajustado según DDL
+      artisan_name: row.artisan_name || "Artesano Desconocido", 
+      category_name: row.categoria_nombre,
+      stock: row.stock || 0,
+      size: row.size,
+      color: row.color,
+      keywords: row.keywords || [],
+    }));
   } catch (error) {
     console.error('Error al filtrar productos:', error);
     throw new Error('No se pudieron aplicar los filtros.');

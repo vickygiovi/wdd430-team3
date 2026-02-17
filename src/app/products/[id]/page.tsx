@@ -4,6 +4,8 @@ import "../../index.css";
 import { fetchProductById } from "@/app/lib/products-data";
 import Image from "next/image";
 import { Product } from "@/app/lib/products-data";
+import { fetchProductReviewsByProductId } from "@/app/lib/review-data";
+import Form from "@/app/ui/reviews/create-form";
 
 // type Product = {
 //   id: string;
@@ -20,6 +22,10 @@ export default async function ProductDetailPage({
   const { id } = await params;
 
   const product = await fetchProductById(id);
+
+  const reviews = await fetchProductReviewsByProductId(id);
+
+  const userId = "ddf3e87c-f0e8-4111-be48-06a9d815c212"
 
   // Inicializamos el estado directamente con una función
   // const [product] = useState<Product | null>(() => {
@@ -123,7 +129,49 @@ export default async function ProductDetailPage({
             </Link>
           </div>
         </div>
+        {/* SECCIÓN DE RATINGS Y COMENTARIOS */}
+      
       </div>
+
+      <div className="reviews-section">
+        <h2 className="reviews-title">Opiniones de clientes</h2>
+        
+        {/* Resumen de estrellas (opcional) */}
+        <div className="reviews-summary">
+          <span className="average-rating">
+            {reviews.length > 0 
+              ? (reviews.reduce((acc, r) => acc + r.rating, 0) / reviews.length).toFixed(1) 
+              : 0} ⭐
+          </span>
+          <span className="total-reviews">({reviews.length} comentarios)</span>
+        </div>
+
+        <div className="add-review-form">
+          <h3>Deja tu opinión</h3>
+          <Form productId={id} userId={userId} />
+        </div>
+
+        <div className="reviews-list">
+          {reviews.length > 0 ? (
+            reviews.map((review, index) => (
+              <div key={index} className="review-item">
+                <div className="review-header">
+                  <span className="review-stars">{"⭐".repeat(review.rating)}</span>
+                  <span className="review-date">
+                    {new Date(review.created_at).toLocaleDateString()}
+                  </span>
+                </div>
+                <p className="review-comment">{review.comment || "Sin comentario escrito."}</p>
+                <p className="review-user">Por Usuario: {review.user_id.split('-')[0]}</p>
+              </div>
+              
+            ))
+          ) : (
+            <p className="no-reviews">Este producto aún no tiene reseñas. ¡Sé el primero!</p>
+          )}
+        </div>
+      </div>
+      
     </section>
   );
 }
