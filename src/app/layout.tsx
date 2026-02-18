@@ -5,6 +5,7 @@ import Image from "next/image";
 import { Twitter, Instagram, Youtube, Linkedin } from 'lucide-react';
 import Link from 'next/link';
 import { auth, signIn, signOut } from "@/auth";
+import NavbarLinks from "@/app/ui/navbar-links";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -44,12 +45,14 @@ export default async function RootLayout({
             <Image src="/logo2.png" alt="Logo" width={50} height={50} />
           </div>
 
-          <ul>
+          {/* <ul>
             <li><Link href="/catalog">Browse Catalog</Link></li>
             <li><Link href="/articles">Stories</Link></li>
             <li><a href="#">My Reviews</a></li>
             <li><a href="#">Contact</a></li>
-          </ul>
+          </ul> */}
+
+          <NavbarLinks />
 
           <div className="nav-actions">
       {/* 1. SI NO HAY SESIÓN: Mostrar Sign in y Register */}

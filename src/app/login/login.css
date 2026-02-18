@@ -1,0 +1,40 @@
+/* Contenedor de toda la pantalla */
+.login-page-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background-color: #f3f2f0; /* bg-light de tu esquema */
+  padding: 1rem;
+}
+
+/* La "tarjeta" que contiene el banner y el form */
+.login-card-wrapper {
+  width: 100%;
+  max-width: 400px;
+  background: white;
+  border-radius: 12px;
+  overflow: hidden; /* Importante para que el banner respete las esquinas redondeadas */
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+}
+
+/* Banner azul superior */
+.login-header-banner {
+  background-color: #2563eb; /* Azul consistente */
+  padding: 2.5rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+/* Espaciado interno para el formulario de Tailwind */
+.login-form-content {
+  padding: 2rem 1.5rem;
+}
+
+/* Si tu LoginForm usa clases de Tailwind, asegúrate de que 
+   los inputs tengan w-full para que no se vean comprimidos */
+input {
+  width: 100% !important;
+}

@@ -35,6 +35,87 @@ body {
   box-sizing: border-box;
 }
 
+/* Acciones que solo se ven en PC */
+.desktop-only-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+/* Acciones dentro del menú móvil */
+.mobile-only-actions {
+  display: none;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.mobile-only-actions hr {
+  border: 0;
+  border-top: 1px solid #ddd;
+  margin-bottom: 0.5rem;
+}
+
+@media (max-width: 768px) {
+  .desktop-only-actions {
+    display: none; /* Desaparecen de la barra principal */
+  }
+
+  .mobile-only-actions {
+    display: flex; /* Aparecen dentro del menú hamburguesa */
+  }
+
+  .nav-actions {
+    gap: 0.5rem;
+  }
+}
+
+/* Botón hamburguesa oculto por defecto */
+.menu-mobile-btn {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-dark);
+}
+
+/* Estilos para el menú en Desktop */
+.nav-menu {
+  display: flex;
+  gap: 1.5rem;
+  list-style: none;
+}
+
+/* MEDIA QUERY PARA MÓVILES */
+@media (max-width: 768px) {
+  .menu-mobile-btn {
+    display: block; /* Aparece el icono */
+    order: 2; /* Lo posicionamos después del logo */
+  }
+
+  .nav-menu {
+    display: none; /* Se oculta la lista */
+    flex-direction: column;
+    position: absolute;
+    top: 70px; /* Ajusta según el alto de tu header */
+    left: 0;
+    width: 100%;
+    background-color: #efece7; /* Color Primary */
+    padding: 2rem;
+    border-bottom: 1px solid #ddd;
+    z-index: 50;
+    gap: 1rem;
+  }
+
+  /* Cuando el menú tiene la clase .active se muestra */
+  .nav-menu.active {
+    display: flex;
+  }
+
+  .nav-actions {
+    order: 3; /* Los botones de login quedan al final */
+  }
+}
+
 /* Este estilo se aplicará SOLO cuando pases el mouse */
 .boton-historia-hover:hover {
   background-color: #f59e0b !important; /* Ámbar-500 */

@@ -194,7 +194,9 @@
   width: 100%;
   display: flex;
   flex-direction: column;
+  align-items: flex-start; /* 👈 importante */
 }
+
 
 .range-slider-container {
   gap: 12px;
