@@ -9,11 +9,15 @@ export default async function Page() {
 
   // 2. Verificamos que el usuario esté logueado
   if (!session || !session.user || !session.user.id) {
-    return {
-      message: 'No autorizado. Debes iniciar sesión para realizar esta acción.',
-    };
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <p className="text-red-500 font-bold">
+          No autorizado. Debes iniciar sesión para realizar esta acción.
+        </p>
+      </div>
+    );
   }
-
+  
   const articles: Article[] = await fetchStoriesByArtesano(
     session.user.id,
   );
