@@ -5,7 +5,7 @@ import Link from 'next/link';
 
 const Card = ({ product }: { product: Product }) => {
   return (
-    <Link href={`/products/${product.id}`}>
+    <Link href={`/catalog/${product.id}`}>
       <div className="card1">
       <div className="card1-img">
         <div style={{ position: 'relative', width: '100%', height: '170px' }}>

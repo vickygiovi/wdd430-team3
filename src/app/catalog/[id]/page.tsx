@@ -1,5 +1,5 @@
 import Link from "next/link";
-import "../products.css";
+import '../productdetails.css';
 import "../../index.css";
 import { fetchProductById } from "@/app/lib/products-data";
 import Image from "next/image";
