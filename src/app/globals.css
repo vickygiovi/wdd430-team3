@@ -22,5 +22,125 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  /* Eliminamos Arial para que Tailwind pueda usar sus fuentes */
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Añade esto para asegurarte de que el modelo de caja no mienta */
+* {
+  box-sizing: border-box;
+}
+
+/* Acciones que solo se ven en PC */
+.desktop-only-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+/* Acciones dentro del menú móvil */
+.mobile-only-actions {
+  display: none;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.mobile-only-actions hr {
+  border: 0;
+  border-top: 1px solid #ddd;
+  margin-bottom: 0.5rem;
+}
+
+@media (max-width: 768px) {
+  .desktop-only-actions {
+    display: none; /* Desaparecen de la barra principal */
+  }
+
+  .mobile-only-actions {
+    display: flex; /* Aparecen dentro del menú hamburguesa */
+  }
+
+  .nav-actions {
+    gap: 0.5rem;
+  }
+}
+
+/* Botón hamburguesa oculto por defecto */
+.menu-mobile-btn {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-dark);
+}
+
+/* Estilos para el menú en Desktop */
+.nav-menu {
+  display: flex;
+  gap: 1.5rem;
+  list-style: none;
+}
+
+/* MEDIA QUERY PARA MÓVILES */
+@media (max-width: 768px) {
+  .menu-mobile-btn {
+    display: block; /* Aparece el icono */
+    order: 2; /* Lo posicionamos después del logo */
+  }
+
+  .nav-menu {
+    display: none; /* Se oculta la lista */
+    flex-direction: column;
+    position: absolute;
+    top: 70px; /* Ajusta según el alto de tu header */
+    left: 0;
+    width: 100%;
+    background-color: #efece7; /* Color Primary */
+    padding: 2rem;
+    border-bottom: 1px solid #ddd;
+    z-index: 50;
+    gap: 1rem;
+  }
+
+  /* Cuando el menú tiene la clase .active se muestra */
+  .nav-menu.active {
+    display: flex;
+  }
+
+  .nav-actions {
+    order: 3; /* Los botones de login quedan al final */
+  }
+}
+
+/* Este estilo se aplicará SOLO cuando pases el mouse */
+.boton-historia-hover:hover {
+  background-color: #f59e0b !important; /* Ámbar-500 */
+  color: white !important;
+  transform: translateY(-2px); /* Un pequeño salto hacia arriba */
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2) !important;
+}
+
+/* Definición del efecto de levante */
+.card-hover-effect {
+  /* Propiedades base */
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), 
+              box-shadow 0.4s ease;
+  backface-visibility: hidden; /* Evita parpadeos en algunos navegadores */
+}
+
+/* Estado al pasar el mouse */
+.card-hover-effect:hover {
+  transform: translateY(-12px); /* El "levante" */
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15); /* Sombra de profundidad */
+  z-index: 10; /* Asegura que la tarjeta esté por encima de las otras al subir */
+}
+
+/* Opcional: Si quieres que la imagen también reaccione */
+.card-hover-effect:hover img {
+  transform: scale(1.05);
+  transition: transform 0.6s ease;
 }

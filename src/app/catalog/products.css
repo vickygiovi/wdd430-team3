@@ -15,6 +15,50 @@ body {
   color: #eee;
 }
 
+/* Contenedor que envuelve SearchInput y Filters */
+.products-toolbar {
+  display: flex;
+  flex-direction: column; /* Coloca uno arriba del otro */
+  gap: 1.5rem;            /* Espacio entre la barra y los botones */
+  margin-bottom: 2rem;
+  width: 100%;
+}
+
+/* Asegura que la barra de búsqueda ocupe todo el ancho */
+.search-bar {
+  width: 100%;
+}
+
+@media (min-width: 1024px) {
+  .products-layout {
+     /* Aseguramos que el layout general sea de dos columnas */
+     display: grid;
+     grid-template-columns: 300px 1fr; 
+     gap: 2.5rem;
+  }
+
+  .products-toolbar {
+    flex-direction: row;      /* Se ponen en la misma línea */
+    align-items: center;      /* Centrados verticalmente */
+    justify-content: space-between; /* Search a la izq, Filters a la der */
+  }
+
+  .search-bar {
+    max-width: 400px;         /* Evita que la barra sea gigante en PC */
+  }
+
+  .filters-container {
+    justify-content: flex-end; /* Alinea los botones a la derecha */
+  }
+}
+
+.search-bar input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
 /* ===== NAVBAR ===== */
 .navbar {
   background: #f3efe9;

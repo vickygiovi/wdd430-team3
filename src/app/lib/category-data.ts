@@ -6,7 +6,7 @@ const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
 
 // Define la interfaz para que coincida con tu SELECT
 export interface Category {
-  id: number;
+  id: string;
   nombre: string;
   descripcion?: string;
   slug?: string;

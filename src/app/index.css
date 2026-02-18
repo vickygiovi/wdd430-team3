@@ -124,17 +124,19 @@ img {
    NAVBAR
 ========================= */
 header {
+  width: 100%;
   background: #efece7;
   border-bottom: 1px solid #ddd;
 }
 
 .navbar {
-  max-width: var(--max-width);
+  max-width: 1200px;
   margin: 0 auto;
-  padding: 0.75rem 1.5rem;
+  padding: 0.75rem 1rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 1rem; /* Espacio mínimo entre logo, links y acciones */
 }
 
 .navbar ul {
@@ -143,33 +145,78 @@ header {
   list-style: none;
 }
 
+@media (max-width: 768px) {
+  .navbar ul {
+    display: none; 
+  }
+}
+
 .navbar a {
   text-decoration: none;
   color: var(--text-dark);
   font-size: 0.9rem;
 }
-
 .nav-actions {
   display: flex;
-  gap: 0.75rem;
+  gap: 0.5rem;
+  align-items: center;
+  flex-wrap: wrap; /* Si hay muchos botones, saltan de línea en lugar de desbordar */
+  justify-content: flex-end;
 }
 
 .btn {
-  padding: 0.4rem 0.8rem;
+  padding: 0.5rem 1rem;
   border-radius: var(--radius);
   font-size: 0.85rem;
+  font-weight: 700;
   cursor: pointer;
-  border: 1px solid transparent;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  /* Importante: Asegurar que siempre haya un borde base */
+  border: 1px solid transparent; 
 }
 
 .btn-outline {
   background: transparent;
-  border-color: #aaa;
+  /* Cambia el color por el que prefieras (ej. el gris de tu texto o negro) */
+  border: 1px solid #2D2926 !important; 
+  color: #2D2926;
+}
+
+.btn-outline:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+  transform: translateY(-1px);
+}
+
+@media (max-width: 480px) {
+  .navbar {
+    padding: 0.5rem;
+  }
+
+  .logo img {
+    width: 40px; /* Reducimos un poco el logo en móviles */
+    height: auto;
+  }
+
+  /* Si eres artesano, hay 4 botones. En móvil es mejor mostrar solo iconos o reducir texto */
+  .nav-actions .btn {
+    padding: 0.4rem 0.6rem;
+    font-size: 0.7rem;
+  }
 }
 
 .btn-solid {
   background: #000;
   color: #fff;
+  border: 1px solid #000;
+}
+
+html, body {
+  overflow-x: hidden;
+  position: relative;
+  width: 100%;
 }
 
 /* =========================
@@ -210,33 +257,37 @@ header {
 /* =========================
    IMAGE / FEATURE SECTION
 ========================= */
+/* =========================
+   IMAGE / FEATURE SECTION (CORREGIDO)
+========================= */
 .feature {
-  background: #e6e6e6;
-  padding: 6rem 1.5rem;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.feature-placeholder {
-  width: 300px;
-  height: 200px;
-  background: #d0d0d0;
-  border-radius: var(--radius);
-}
-
-.feature {
-  background-color: #F5F2ED; /* Color Primary del schema */
-  padding: 80px 1.5rem;
+  background-color: #F5F2ED; 
+  /* Usamos padding responsivo: 80px arriba/abajo, 1rem a los lados */
+  padding: 80px 1rem; 
+  width: 100%;
+  overflow: hidden; /* Evita cualquier desborde accidental */
 }
 
 .feature-grid {
   max-width: var(--max-width);
   margin: 0 auto;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 3rem;
+  /* 'auto-fit' con un minmax más pequeño para teléfonos */
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2rem; /* Bajamos un poco el gap para tablets */
   text-align: center;
+}
+
+/* Media Query para pantallas muy pequeñas (iPhone SE, etc) */
+@media (max-width: 350px) {
+  .feature-grid {
+    grid-template-columns: 1fr; /* Una sola columna pura */
+  }
+}
+
+.feature-item {
+  padding: 1rem;
+  width: 100%; /* Asegura que el item no crezca más que su celda */
 }
 
 .feature-item h3 {
@@ -249,19 +300,21 @@ header {
   color: #555;
   font-size: 0.95rem;
   line-height: 1.6;
+  /* Evita que párrafos largos empujen el ancho en móviles */
+  max-width: 400px;
+  margin: 0 auto;
 }
 
 .feature-icon {
   font-size: 2.5rem;
-  display: block;
-  margin-bottom: 0.5rem;
-  /* Opcional: usar Accent 1 para un círculo de fondo suave */
+  display: flex; /* Cambiado a flex para centrar mejor el emoji */
+  align-items: center;
+  justify-content: center;
   background: #C05C3E22; 
   width: 80px;
   height: 80px;
-  line-height: 80px;
   border-radius: 50%;
-  margin: 0 auto;
+  margin: 0 auto 0.5rem;
 }
 
 /* =========================
@@ -394,4 +447,12 @@ footer {
   padding-top: 40px;
   max-width: 1200px;
   margin: 0 auto;
+}
+
+.add-story {
+  display: flex;
+  justify-content: space-between;
+  padding-top: 40px;
+  margin: 0 auto;
+  margin-bottom: 30px;
 }

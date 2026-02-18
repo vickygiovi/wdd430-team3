@@ -1,61 +1,86 @@
 "use client";
 
 import { useState } from "react";
+import { useSearchParams, usePathname, useRouter } from 'next/navigation';
+import { useDebouncedCallback } from 'use-debounce';
 import "./sidebar.css";
+import { Category } from "../lib/category-data";
 
-const Sidebar: React.FC = () => {
-  // 1. Estados para la reactividad
-  const [activeKeywords, setActiveKeywords] = useState([
-    "Spring",
-    "Smart",
-    "Modern",
-  ]);
+const Sidebar = ({ categories }: { categories: Category[]; }) => {
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
+  const { replace } = useRouter();
 
-  const [categories, setCategories] = useState({
-    newArrivals: true,
-    bestSellers: false,
-  });
+  // --- LECTURA DE LA URL ---
+  // Si no hay keywords en la URL, usamos las 3 por defecto
+  const urlKeywords = searchParams.get('keyword');
+  const activeKeywords = urlKeywords 
+    ? urlKeywords.split(',').filter(Boolean) 
+    : []; // Esencia: Keywords por defecto
 
-  const [size, setSize] = useState("M");
-  const [color, setColor] = useState("blue");
+  const activeColor = searchParams.get('color') || "";
+  const activeSize = searchParams.get('size') || "";
+  const minPrice = Number(searchParams.get('minPrice')) || 0;
+  const maxPrice = Number(searchParams.get('maxPrice')) || 100;
+  
+  // Categorías: leemos si están en la URL (ej: ?categories=newArrivals,bestSellers)
+  const activeCats = searchParams.get('categories')?.split(',') || [];
 
-  // Estado inicial con rango
-  const [price, setPrice] = useState({ min: 0, max: 100 });
+  const [inputValue, setInputValue] = useState("");
 
-  const [inputValue, setInputValue] = useState(""); // Nuevo estado para el input
-
-  const handleMinChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = Math.min(Number(e.target.value), price.max - 1);
-    setPrice({ ...price, min: value });
-  };
-
-  const handleMaxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = Math.max(Number(e.target.value), price.min + 1);
-    setPrice({ ...price, max: value });
-  };
-
-  // Funciones controladoras
-  const removeKeyword = (tag: string) => {
-    setActiveKeywords(activeKeywords.filter((k) => k !== tag));
+  // --- LÓGICA DE ACTUALIZACIÓN ---
+  const updateURL = (updates: Record<string, string | undefined>) => {
+    const params = new URLSearchParams(searchParams);
+    Object.entries(updates).forEach(([key, value]) => {
+      if (value) params.set(key, value);
+      else params.delete(key);
+    });
+    params.set('page', '1');
+    replace(`${pathname}?${params.toString()}`);
   };
 
   const handleCategoryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setCategories({ ...categories, [e.target.name]: e.target.checked });
+    const { name, checked } = e.target;
+    
+    // Usamos Set para asegurar que los IDs sean únicos automáticamente
+    const catsSet = new Set(activeCats);
+
+    if (checked) {
+      catsSet.add(name);
+    } else {
+      catsSet.delete(name);
+    }
+
+    const newCatsArray = Array.from(catsSet);
+    
+    updateURL({ 
+      categories: newCatsArray.length > 0 ? newCatsArray.join(',') : undefined 
+    });
   };
 
   const handleAddKeyword = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter" && inputValue.trim() !== "") {
-      // Evitamos duplicados
-      if (!activeKeywords.includes(inputValue.trim())) {
-        setActiveKeywords([...activeKeywords, inputValue.trim()]);
+      const trimmed = inputValue.trim();
+      if (!activeKeywords.includes(trimmed)) {
+        const newKeywords = [...activeKeywords, trimmed];
+        updateURL({ keyword: newKeywords.join(',') });
       }
-      setInputValue(""); // Limpiamos el input
+      setInputValue("");
     }
   };
 
+  const removeKeyword = (tag: string) => {
+    const newKeywords = activeKeywords.filter((k) => k !== tag);
+    updateURL({ keyword: newKeywords.length > 0 ? newKeywords.join(',') : undefined });
+  };
+
+  const debouncedPriceUpdate = useDebouncedCallback((min: number, max: number) => {
+    updateURL({ minPrice: min.toString(), maxPrice: max.toString() });
+  }, 400);
+
   return (
     <aside className="sidebar">
-      {/* Sección de Keywords */}
+      {/* KEYWORDS */}
       <div className="filter-group">
         <h5 className="filter-title">KEYWORDS</h5>
         <input
@@ -68,87 +93,51 @@ const Sidebar: React.FC = () => {
         />
         <div className="tag-container">
           {activeKeywords.map((tag) => (
-            <span
-              key={tag}
-              className={`tag ${tag === "Smart" ? "active" : ""}`}
-            >
-              {tag}{" "}
-              <span
-                onClick={() => removeKeyword(tag)}
-                style={{ cursor: "pointer" }}
-              >
-                ×
-              </span>
+            <span key={tag} className="tag active">
+              {tag} <span onClick={() => removeKeyword(tag)} style={{ cursor: "pointer" }}>×</span>
             </span>
           ))}
         </div>
       </div>
 
-      {/* Sección de Categorías */}
+      {/* CATEGORIES (Recuperadas) */}
+      {/* CATEGORIES */}
       <div className="filter-group">
         <h5 className="filter-title">CATEGORIES</h5>
-        <label className="checkbox-item">
-          <input
-            type="checkbox"
-            name="newArrivals"
-            checked={categories.newArrivals}
-            onChange={handleCategoryChange}
-          />
-          <span>New Arrivals</span>
-        </label>
-        <label className="checkbox-item">
-          <input
-            type="checkbox"
-            name="bestSellers"
-            checked={categories.bestSellers}
-            onChange={handleCategoryChange}
-          />
-          <span>Best Sellers</span>
-        </label>
+        {categories.map((cat) => (
+          <label key={cat.id} className="checkbox-item">
+            <input
+              type="checkbox"
+              name={cat.id.toString()}
+              checked={activeCats.includes(cat.id.toString())}
+              onChange={handleCategoryChange}
+            />
+            <span>{cat.nombre}</span>
+          </label>
+        ))}
       </div>
 
-      {/* Sección de Precio */}
+      {/* PRICE RANGE */}
       <div className="filter-group">
         <h5 className="filter-title">PRICE RANGE</h5>
-
         <div className="range-slider-container">
-          <input
-            type="range"
-            className="slider min-slider"
-            min="0"
-            max="100"
-            value={price.min}
-            onChange={handleMinChange}
-          />
-          <input
-            type="range"
-            className="slider max-slider"
-            min="0"
-            max="100"
-            value={price.max}
-            onChange={handleMaxChange}
-          />
+          <input type="range" className="slider min-slider" min="0" max="100" value={minPrice} onChange={(e) => debouncedPriceUpdate(Number(e.target.value), maxPrice)} />
+          <input type="range" className="slider max-slider" min="0" max="100" value={maxPrice} onChange={(e) => debouncedPriceUpdate(minPrice, Number(e.target.value))} />
         </div>
-
         <div className="price-text">
-          <span>
-            Min: <strong>${price.min.toFixed(2)}, </strong>
-          </span>
-          <span>
-            Max: <strong>${price.max.toFixed(2)}</strong>
-          </span>
+          <span>Min: <strong>${minPrice}</strong>, Max: <strong>${maxPrice}</strong></span>
         </div>
       </div>
 
-      {/* Sección de Tallas */}
+      {/* SIZE */}
       <div className="filter-group">
         <h5 className="filter-title">SIZE</h5>
         <div className="size-grid">
           {["S", "M", "L"].map((s) => (
             <button
               key={s}
-              className={`size-btn ${size === s ? "active" : ""}`}
-              onClick={() => setSize(s)}
+              className={`size-btn ${activeSize === s ? "active" : ""}`}
+              onClick={() => updateURL({ size: activeSize === s ? undefined : s })}
             >
               {s}
             </button>
@@ -156,15 +145,15 @@ const Sidebar: React.FC = () => {
         </div>
       </div>
 
-      {/* Sección de Colores */}
+      {/* COLOR */}
       <div className="filter-group">
         <h5 className="filter-title">COLOR</h5>
         <div className="color-grid">
           {["white", "blue", "orange", "green", "black"].map((c) => (
             <button
               key={c}
-              className={`color-btn ${c} ${color === c ? "active" : ""}`}
-              onClick={() => setColor(c)}
+              className={`color-btn ${c} ${activeColor === c ? "active" : ""}`}
+              onClick={() => updateURL({ color: activeColor === c ? undefined : c })}
               title={c}
             ></button>
           ))}

@@ -1,0 +1,156 @@
+/* 1. Contenedor Maestro */
+.blog-container {
+  max-width: 1200;
+  margin: 0 auto;
+  padding: 60px 20px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #2d3748;
+  line-height: 1.6;
+}
+
+/* 2. H1: Título Centrado */
+.blog-title {
+  text-align: center;
+  font-size: 3rem;
+  font-weight: 900;
+  margin-bottom: 20px;
+  color: #1a202c;
+  line-height: 1.1;
+}
+
+/* 3. H2: Resumen del post */
+.blog-summary {
+  text-align: center;
+  font-size: 1.4rem;
+  font-weight: 300;
+  font-style: italic;
+  color: #718096;
+  max-width: 700px;
+  margin: 0 auto 40px auto;
+}
+
+/* 4. H3 + Avatar: Información del Artesano */
+.blog-author {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  margin-bottom: 60px;
+}
+
+.author-avatar {
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #edf2f7;
+}
+
+.author-name {
+  font-size: 1.1rem;
+  color: #4a5568;
+  margin: 0;
+}
+
+.author-name span {
+  color: #c05c3e; /* Color artesano */
+  font-weight: bold;
+}
+
+/* 5. Imagen Principal: Centrada con aire (padding lateral) */
+.blog-hero-image {
+  padding: 0 40px; /* Aire a los lados */
+  margin-bottom: 60px;
+}
+
+.main-img {
+  width: 100%;
+  height: auto;
+  border-radius: 20px;
+  display: block;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+}
+
+/* 6. Post: Inicial grande (Drop Cap) */
+.blog-content {
+  max-width: 1000px; /* Columna de texto más estrecha para lectura */
+  margin: 0 auto;
+}
+
+.post-text {
+  font-size: 1.2rem;
+  white-space: pre-wrap;
+  color: #2d3748;
+}
+
+.post-text::first-letter {
+  font-size: 4.5rem;
+  font-weight: 900;
+  float: left;
+  margin-right: 12px;
+  line-height: 0.8;
+  color: #c05c3e;
+  font-family: Georgia, serif; /* Toque clásico */
+}
+
+/* 7. Video: Centrado y con aire */
+.blog-video-section {
+  padding: 0 60px; /* Más aire que la imagen */
+  margin: 60px 0;
+}
+
+.video-wrapper {
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 10px 15px rgba(0,0,0,0.05);
+}
+
+/* 8. Botón de Likes */
+.blog-footer {
+  display: flex;
+  justify-content: center;
+  margin-top: 80px;
+  padding-top: 40px;
+  border-top: 1px solid #edf2f7;
+  background-color: white;
+  border-radius: 20px;
+}
+
+.like-button {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 30px;
+  background-color: white;
+  border: 2px solid #fed7e2; /* Color suave de inicio */
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.like-button:hover {
+  border-color: #f687b3;
+  background-color: #fff5f7;
+  transform: scale(1.05);
+}
+
+.heart-icon {
+  font-size: 1.5rem;
+}
+
+.like-text {
+  font-weight: bold;
+  color: #4a5568;
+}
+
+.blog-header {
+    background-color: white;
+    border-radius: 20px;
+    padding-top: 50px;
+    margin-bottom: 50px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .blog-title { font-size: 2.2rem; }
+  .blog-hero-image, .blog-video-section { padding: 0; }
+  .post-text::first-letter { font-size: 3.5rem; }
+}

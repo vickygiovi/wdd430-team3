@@ -19,3 +19,7 @@
   /* Agrega una sombra para dar profundidad */
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
 }
+
+.image_product {
+  border-radius: 8px;
+}

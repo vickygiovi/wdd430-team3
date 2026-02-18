@@ -1,0 +1,7 @@
+.imagen {
+  width: 100%;       /* O el ancho fijo que desees, ej: 300px */
+  height: 200px;      /* Debe ser igual al ancho para un cuadrado perfecto */
+  object-fit: cover;  /* Recorta la imagen para llenar el contenedor */
+  object-position: center; /* Centra el recorte */
+  border-radius: 8px; /* Opcional: para mantener las esquinas redondeadas de tu diseño */
+}

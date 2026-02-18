@@ -4,10 +4,45 @@ import { redirect } from 'next/navigation';
 
 const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
 
+export interface Product {
+  id: string,
+  name: string,
+  price: number,
+  stock: number,
+  available: boolean,
+  description: string,
+  category_id: string,
+  size?: string,
+  color?: string,
+  keywords?: string[],
+  main_image: string,
+  imagenes_galeria: string[],
+  artesano_id?: string,
+  category_name?: string,
+  artisan_name: string
+}
+// interface ProductFiltered {
+//   id: string;
+//   artesano_id: string;
+//   nombre: string;
+//   descripcion: string;
+//   precio: number | string;
+//   imagen_principal: string; // Nombre real en tu DDL
+//   imagenes_galeri: string[]; // Nombre real en tu DDL
+//   stock: number;
+//   is_available: boolean;
+//   category_id: string;
+//   keywords: string[];
+//   size: string | null;
+//   color: string | null;
+//   categoria_nombre: string; // Del LEFT JOIN
+//   artisan_name?: string; // Asegúrate de tener este campo en el SELECT o JOIN
+// }
+
 // READ: Obtener todos los productos con el nombre de su categoría y nuevos campos
 export async function fetchProducts() {
   try {
-    const products = await sql`
+    const data = await sql`
       SELECT 
         p.*, 
         c.nombre as categoria_nombre 
@@ -16,7 +51,25 @@ export async function fetchProducts() {
       ORDER BY p.created_at DESC
     `;
     // Al usar p.* ya incluimos automáticamente keywords, size y color
-    return products;
+    return data.map(row => ({
+      id: row.id,
+      name: row.nombre,             // Ajusta 'nombre' si en tu DB se llama 'name'
+      price: parseFloat(row.precio), // Asegura que sea número (Postgres suele devolver decimales como string)
+      stock: parseInt(row.stock),   
+      available: row.is_available,  // Ajusta al nombre exacto de tu columna
+      description: row.descripcion, 
+      category_id: row.category_id,
+      
+      // Campos opcionales (si son null en DB, pasan como undefined o se mantienen)
+      size: row.size ?? undefined,
+      color: row.color ?? undefined,
+      keywords: row.keywords || [], // Si es null, devuelve un array vacío para evitar errores
+      
+      // Imágenes
+      main_image: row.imagen_principal_url,
+      imagenes_galeria: row.imagenes_galeria || [],
+      artesano_id: row.artesano_id
+    }));
   } catch (error) {
     console.error('Error:', error);
     throw new Error('No se pudieron cargar los productos.');
@@ -25,9 +78,43 @@ export async function fetchProducts() {
 
 // READ: Obtener un solo producto por ID (incluye keywords, size y color)
 export async function fetchProductById(id: string) {
+
+  console.log("Buscando ID:", id);
+
   try {
-    const product = await sql`SELECT * FROM products WHERE id = ${id}`;
-    return product[0];
+    const data = await sql`
+      SELECT 
+      p.*, 
+      c.nombre AS category_name, 
+      a.username AS artisan_name
+      FROM products p
+      LEFT JOIN categories c ON p.category_id = c.id
+      LEFT JOIN users a ON p.artesano_id = a.id
+      WHERE p.id = ${id}
+    `;
+
+    const products = data.map(row => ({
+      id: row.id,
+      name: row.nombre,             // Ajusta 'nombre' si en tu DB se llama 'name'
+      price: parseFloat(row.precio), // Asegura que sea número (Postgres suele devolver decimales como string)
+      stock: parseInt(row.stock),   
+      available: row.is_available,  // Ajusta al nombre exacto de tu columna
+      description: row.descripcion, 
+      category_id: row.category_id,
+      
+      // Campos opcionales (si son null en DB, pasan como undefined o se mantienen)
+      size: row.size ?? undefined,
+      color: row.color ?? undefined,
+      keywords: row.keywords || [], // Si es null, devuelve un array vacío para evitar errores
+      
+      // Imágenes
+      main_image: row.imagen_principal_url,
+      imagenes_galeria: row.imagenes_galeria || [],
+      category_name: row.category_name,
+      artisan_name: row.artisan_name
+    }));
+    
+    return products[0];
   } catch (error) {
     throw new Error('Producto no encontrado.');
   }
@@ -101,37 +188,91 @@ export async function fetchProductsByArtesano(artesanoId: string) {
 }
 
 export async function fetchFilteredProducts({
-  categoryId,
+  categoryIds,
   minPrice,
   maxPrice,
   keyword,
   size,
   color,
+  sortBy, // Nuevo parámetro: 'date', 'price_asc', 'price_desc'
+  searchName,
 }: {
-  categoryId?: string;
+  categoryIds?: string | string[];
   minPrice?: number;
   maxPrice?: number;
   keyword?: string;
   size?: string;
   color?: string;
+  sortBy?: string; // Agregamos el tipo aquí
+  searchName?: string;
 }) {
   try {
-    // Iniciamos la consulta base
+
+    let finalIds: string[] = [];
+    
+    if (categoryIds) {
+      if (Array.isArray(categoryIds)) {
+        // Si ya es un array, nos aseguramos de que no haya strings con comas adentro
+        finalIds = categoryIds.flatMap(id => id.split(',')).filter(Boolean);
+      } else if (typeof categoryIds === 'string') {
+        // Si es un string "id1,id2", lo rompemos en un array real
+        finalIds = categoryIds.split(',').filter(Boolean);
+      }
+    }
+
+    // Eliminamos duplicados por seguridad
+    finalIds = [...new Set(finalIds)];
+
+    console.log("finalids", finalIds)
+
+    // Definimos el mapeo de ordenamiento por seguridad
+    let orderByClause = sql`ORDER BY p.created_at DESC`; // Orden por defecto
+
+    if (sortBy === 'price_asc') {
+      orderByClause = sql`ORDER BY p.precio ASC`;
+    } else if (sortBy === 'price_desc') {
+      orderByClause = sql`ORDER BY p.precio DESC`;
+    } else if (sortBy === 'date_asc') {
+      orderByClause = sql`ORDER BY p.created_at ASC`;
+    }
+
     const products = await sql`
       SELECT p.*, c.nombre as categoria_nombre 
       FROM products p
       LEFT JOIN categories c ON p.category_id = c.id
       WHERE 1=1
-      ${categoryId ? sql`AND p.category_id = ${categoryId}` : sql``}
+      ${
+        finalIds.length > 0 
+          ? sql`AND p.category_id IN ${sql(finalIds)}` // Fíjate: IN ${sql(finalIds)} sin paréntesis manuales
+          : sql``
+      }
       ${minPrice ? sql`AND p.precio >= ${minPrice}` : sql``}
       ${maxPrice ? sql`AND p.precio <= ${maxPrice}` : sql``}
       ${size ? sql`AND p.size = ${size}` : sql``}
       ${color ? sql`AND p.color = ${color}` : sql``}
+      ${
+        searchName 
+          ? sql`AND p.nombre ILIKE ${'%' + searchName + '%'}` 
+          : sql``
+      }
       ${keyword ? sql`AND ${keyword} = ANY(p.keywords)` : sql``}
-      ORDER BY p.created_at DESC
+      ${orderByClause}
     `;
 
-    return products;
+    return products.map((row) => ({
+      id: row.id,
+      name: row.nombre,
+      price: Number(row.precio) || 0,
+      description: row.descripcion || "",
+      main_image: row.imagen_principal_url, // Ajustado según DDL
+      imagenes_galeria: row.imagenes_galeria || [], // Ajustado según DDL
+      artisan_name: row.artisan_name || "Artesano Desconocido", 
+      category_name: row.categoria_nombre,
+      stock: row.stock || 0,
+      size: row.size,
+      color: row.color,
+      keywords: row.keywords || [],
+    }));
   } catch (error) {
     console.error('Error al filtrar productos:', error);
     throw new Error('No se pudieron aplicar los filtros.');
