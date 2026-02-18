@@ -360,7 +360,7 @@ export default function Form({ categories, product }: { categories: Category[], 
       </div>
 
       <button className="create-button" type="submit">
-        Create
+        Update
       </button>
 
       {/* Mensaje general al final del formulario */}

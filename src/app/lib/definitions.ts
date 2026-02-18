@@ -27,3 +27,16 @@ export interface Article {
 
   post: string;
 };
+
+// app/lib/definitions.ts o src/app/lib/definitions.ts
+export type User = {
+  id: string; // uuid
+  username: string;
+  email: string;
+  password_hash: string; // En tu DDL es character varying(60)
+  full_name?: string;
+  avatar_url?: string;
+  bio?: string;
+  role: 'artesano' | 'cliente'; // Basado en tu default 'artesano'
+  is_active: boolean;
+};

@@ -1,57 +1,19 @@
-'use client';
-
-import { useActionState } from 'react'; // Ahora desde 'react'
-import { authenticate, AuthState } from '@/app/lib/user-actions';
-
+import LoginForm from '@/app/ui/login-form';
+import { Suspense } from 'react';
+ 
 export default function LoginPage() {
-  const initialState: AuthState = {};
-
-  // isPending reemplaza la necesidad de useFormStatus para el botón simple
-  const [state, formAction, isPending] = useActionState(
-    authenticate,
-    initialState
-  );
-
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50">
-      <div className="w-full max-w-md space-y-8 rounded-xl bg-white p-10 shadow-lg">
-        <h2 className="text-center text-3xl font-extrabold text-gray-900">
-          Iniciar Sesión
-        </h2>
+    <main className="flex items-center justify-center md:h-screen">
+      <div className="relative mx-auto flex w-full max-w-[400px] flex-col space-y-2.5 p-4 md:-mt-32">
+        <div className="flex h-20 w-full items-end rounded-lg bg-blue-500 p-3 md:h-36">
+          <div className="w-32 text-white md:w-36">
 
-        <form action={formAction} className="mt-8 space-y-6">
-          <div className="space-y-4">
-            <input
-              name="email"
-              type="email"
-              placeholder="Email"
-              required
-              className="w-full border p-2 rounded-md"
-            />
-            <input
-              name="password"
-              type="password"
-              placeholder="Contraseña"
-              required
-              className="w-full border p-2 rounded-md"
-            />
           </div>
-
-          {state?.error && (
-            <div className="text-sm text-red-600 bg-red-50 p-2 rounded border border-red-200">
-              {state.error}
-            </div>
-          )}
-
-          <button
-            type="submit"
-            disabled={isPending}
-            className="w-full rounded-md bg-indigo-600 py-2 text-white hover:bg-indigo-700 disabled:opacity-50"
-          >
-            {isPending ? 'Verificando...' : 'Entrar'}
-          </button>
-        </form>
+        </div>
+        <Suspense>
+          <LoginForm />
+        </Suspense>
       </div>
-    </div>
+    </main>
   );
 }

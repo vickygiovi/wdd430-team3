@@ -1,9 +1,19 @@
 import { getUser, User } from "../lib/user-data";
 import Image from "next/image";
 import './profile.css';
+import { auth } from '@/auth';
 
 export default async function ProfilePage() {
-  const user: User = await getUser('cliente@ejemplo.com');
+  const session = await auth();
+
+  // 2. Verificamos que el usuario esté logueado
+  if (!session || !session.user || !session.user.id) {
+    return {
+      message: 'No autorizado. Debes iniciar sesión para realizar esta acción.',
+    };
+  }
+  
+  const user: User = await getUser(session.user.email);
 
   return (
     <div className="profile-container">

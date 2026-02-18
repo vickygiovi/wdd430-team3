@@ -11,6 +11,8 @@ const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
 import { promises as fs } from 'fs';
 import path from 'path';
 
+import { auth } from '@/auth'
+
 // Función auxiliar para guardar archivos
 async function saveFile(file: File, folder: string): Promise<string> {
   const arrayBuffer = await file.arrayBuffer();
@@ -215,6 +217,15 @@ export async function createProduct(prevState: State, formData: FormData): Promi
     formData.getAll('imagenes_galeria').length
   );
 
+  const session = await auth();
+
+  // 2. Verificamos que el usuario esté logueado
+  if (!session || !session.user || !session.user.id) {
+    return {
+      message: 'No autorizado. Debes iniciar sesión para realizar esta acción.',
+    };
+  }
+  
   // 1. Pre-procesamiento de archivos (Limpiamos los archivos vacíos antes de validar)
   const rawMainImage = formData.get('imagen_principal');
   const mainImageFile = (rawMainImage instanceof File && rawMainImage.size > 0) ? rawMainImage : null;
@@ -251,7 +262,7 @@ export async function createProduct(prevState: State, formData: FormData): Promi
     is_available, size, color, keywords 
   } = validatedFields.data;
 
-  const artesano_id = 'a239e0e7-70d2-47f9-83f7-d0a7e33e5850';
+  const artesano_id = session.user.id;
   
   try {
     // 3. Guardado de archivos optimizado
@@ -296,6 +307,15 @@ export async function updateProduct( id: string, prevState: StateUpdatingProduct
     formData.getAll('imagenes_galeria').length
   );
 
+  const session = await auth();
+
+  // 2. Verificamos que el usuario esté logueado
+  if (!session || !session.user || !session.user.id) {
+    return {
+      message: 'No autorizado. Debes iniciar sesión para realizar esta acción.',
+    };
+  }
+
   // 1. Pre-procesamiento de archivos (Limpiamos los archivos vacíos antes de validar)
   const rawMainImage = formData.get('imagen_principal');
   const mainImageFile = (rawMainImage instanceof File && rawMainImage.size > 0) ? rawMainImage : null;
@@ -331,7 +351,7 @@ export async function updateProduct( id: string, prevState: StateUpdatingProduct
     is_available, size, color, keywords 
   } = validatedFields.data;
 
-  const artesano_id_sesion = 'a239e0e7-70d2-47f9-83f7-d0a7e33e5850';
+  const artesano_id_sesion = session.user.id;
 
   try {
     // 3. Guardado de archivos optimizado
@@ -420,7 +440,17 @@ export async function updateProduct( id: string, prevState: StateUpdatingProduct
 
 // DELETE: Borrado físico del producto
 export async function deleteProduct(id: string, prevState: StateDeletingProduct) {
-  const artesano_id_sesion = 'a239e0e7-70d2-47f9-83f7-d0a7e33e5850';
+
+  const session = await auth();
+
+  // 2. Verificamos que el usuario esté logueado
+  if (!session || !session.user || !session.user.id) {
+    return {
+      message: 'No autorizado. Debes iniciar sesión para realizar esta acción.',
+    };
+  }
+
+  const artesano_id_sesion = session.user.id;
 
   try {
     const result = await sql`DELETE FROM products WHERE id = ${id} AND artesano_id = ${artesano_id_sesion} RETURNING id`;

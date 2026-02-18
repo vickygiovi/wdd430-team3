@@ -3,10 +3,20 @@ import { Plus } from "lucide-react";
 import Link from "next/link";
 import { fetchProductsByArtesano } from "../lib/products-data";
 import './productimages.css';
+import { auth } from '@/auth';
 
 export default async function Page() {
 
-  const products = await fetchProductsByArtesano('a239e0e7-70d2-47f9-83f7-d0a7e33e5850');
+  const session = await auth();
+
+  // 2. Verificamos que el usuario esté logueado
+  if (!session || !session.user || !session.user.id) {
+    return {
+      message: 'No autorizado. Debes iniciar sesión para realizar esta acción.',
+    };
+  }
+
+  const products = await fetchProductsByArtesano(session.user.id);
 
   const productsMock = [
     {

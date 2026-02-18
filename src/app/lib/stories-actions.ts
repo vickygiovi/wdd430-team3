@@ -8,6 +8,8 @@ import { z } from 'zod';
 
 import { promises as fs } from 'fs';
 import path from 'path';
+import { auth } from '@/auth';
+
 
 async function saveFile(file: File, folder: string): Promise<string> {
   const arrayBuffer = await file.arrayBuffer();
@@ -73,6 +75,11 @@ export type StoryState = {
   message?: string | null;
 };
 
+export type DeleteStoryState = {
+  message: string | null;
+  error: boolean;
+};
+
 const CreateStory = z.object({
   artesano_id: z.string().uuid(),
   titulo: z.string().max(150).optional().or(z.literal("")),
@@ -106,13 +113,22 @@ const UpdateStory = z.object({
 
 export async function createStory(prevState: StoryState, formData: FormData): Promise<StoryState> {
   
+  const session = await auth();
+
+  // 2. Verificamos que el usuario esté logueado
+  if (!session || !session.user || !session.user.id) {
+    return {
+      message: 'No autorizado. Debes iniciar sesión para realizar esta acción.',
+    };
+  }
+
+  const artesano_id_default = session.user.id;
+
   // 1. Pre-procesamiento de archivos (Imagen y Video opcionales)
   const rawImage = formData.get('imagen_url');
   const imageFile = (rawImage instanceof File && rawImage.size > 0) ? rawImage : null;
 
   const youtubeUrl = formData.get('video_url')?.toString() || null;
-
-  const artesano_id_default = 'a239e0e7-70d2-47f9-83f7-d0a7e33e5850';
 
   // 2. Validación con Zod
   const validatedFields = CreateStory.safeParse({
@@ -211,7 +227,18 @@ export async function updateStory(
   prevState: StoryState,
   formData: FormData
 ): Promise<StoryState> {
+
+  const session = await auth();
+
+  // 2. Verificamos que el usuario esté logueado
+  if (!session || !session.user || !session.user.id) {
+    return {
+      message: 'No autorizado. Debes iniciar sesión para realizar esta acción.',
+    };
+  }
   
+  const AUTHORIZED_ARTISAN_ID = session.user.id;
+
   // 1. Pre-procesamiento de la nueva imagen (si se subió una)
   const rawImage = formData.get('imagen_url');
   const imageFile = (rawImage instanceof File && rawImage.size > 0) ? rawImage : null;
@@ -251,9 +278,11 @@ export async function updateStory(
     // Usamos COALESCE o lógica condicional para la imagen: 
     // Si new_imagen_url es null, significa que no se subió nada nuevo, 
     // por lo tanto no actualizamos esa columna o mantenemos la vieja.
+
+    let result;
     
     if (new_imagen_url) {
-      await sql`
+      result =await sql`
         UPDATE stories 
         SET 
           titulo = COALESCE(${titulo ?? null}, titulo), 
@@ -263,10 +292,11 @@ export async function updateStory(
           publicado = ${publicado ?? false}, 
           tags = COALESCE(${tags ?? null}, tags), 
           post = COALESCE(${post ?? null}, post)
-        WHERE id = ${id}
+        WHERE id = ${id} AND artesano_id = ${AUTHORIZED_ARTISAN_ID}
+        RETURNING id
       `;
     } else {
-      await sql`
+      result =await sql`
         UPDATE stories 
         SET 
           titulo = COALESCE(${titulo ?? null}, titulo), 
@@ -275,8 +305,15 @@ export async function updateStory(
           publicado = ${publicado ?? false}, 
           tags = COALESCE(${tags ?? null}, tags), 
           post = COALESCE(${post ?? null}, post)
-        WHERE id = ${id}
+        WHERE id = ${id} AND artesano_id = ${AUTHORIZED_ARTISAN_ID}
+        RETURNING id
       `;
+    }
+
+    if (result.length === 0) {
+      return {
+        message: 'No autorizado: No tienes permiso para editar esta historia.',
+      };
     }
 
   } catch (error) {
@@ -293,14 +330,35 @@ export async function updateStory(
 }
 
 // DELETE: Eliminar Historia
-export async function deleteStory(id: string) {
+export async function deleteStory(id: string, prevState: DeleteStoryState): Promise<DeleteStoryState> {
+  const session = await auth();
+
+  // 2. Verificamos que el usuario esté logueado
+  if (!session || !session.user || !session.user.id) {
+    return {
+      message: 'No autorizado. Debes iniciar sesión para realizar esta acción.',
+      error: true
+    };
+  }
+
+  const artesano_id_sesion = session.user.id;
+
   try {
-    await sql`DELETE FROM stories WHERE id = ${id}`;
-    revalidatePath('/stories');
-    redirect('/stories');
+    const result = await sql`DELETE FROM stories WHERE id = ${id} AND artesano_id = ${artesano_id_sesion} RETURNING id`;
+
+    if (result.length === 0) {
+      return { 
+        message: 'No tienes permiso para eliminar este producto o ya no existe.',
+        error: true
+      };
+    }
+    
+    revalidatePath('/mystories');
   } catch (error) {
     console.error('Error al eliminar la historia:', error);
   }
+
+  redirect('/mystories');
 }
 
 // EXTRA: Like a una historia

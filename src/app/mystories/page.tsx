@@ -2,10 +2,20 @@ import Link from "next/link";
 import Image from "next/image";
 import { Article } from "../lib/definitions";
 import { fetchStoriesByArtesano } from "../lib/stories-data";
+import { auth } from '@/auth';
 
 export default async function Page() {
+  const session = await auth();
+
+  // 2. Verificamos que el usuario esté logueado
+  if (!session || !session.user || !session.user.id) {
+    return {
+      message: 'No autorizado. Debes iniciar sesión para realizar esta acción.',
+    };
+  }
+
   const articles: Article[] = await fetchStoriesByArtesano(
-    "a239e0e7-70d2-47f9-83f7-d0a7e33e5850",
+    session.user.id,
   );
 
   const styles = {
@@ -295,7 +305,7 @@ export default async function Page() {
                 </Link>
                 
                 <Link
-                    href={"#"} // O la ruta que maneje el borrado
+                    href={`/mystories/${article.id}/delete`} // O la ruta que maneje el borrado
                     className="flex-1 py-2 bg-red-600 text-white text-sm rounded hover:bg-red-700 transition-colors text-center btn-products"
                 >
                     Delete Story

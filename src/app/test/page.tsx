@@ -1,7 +1,11 @@
-import Search from "../ui/search";
+import { auth } from "@/auth";
 
-export default function Page() {
-    return (
-        <Search placeholder="Placeholder" />
-    )
- }
+export default async function TestPage() {
+  const session = await auth();
+
+  return (
+    <pre>
+      {JSON.stringify(session, null, 2)}
+    </pre>
+  );
+}
