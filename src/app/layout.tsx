@@ -32,7 +32,7 @@ export default async function RootLayout({
   const userRole = session?.user?.role; // 'artesano' o 'cliente'
 
   return (
-    <html lang="en">
+    <html lang="en" style={{ colorScheme: 'light' }}>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-white text-black`}
       >
