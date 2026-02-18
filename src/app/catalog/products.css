@@ -10,10 +10,10 @@ Products Page Specific Styles
 }
 
 /* ===== BODY ===== */
-body {
+/* body {
   background: #2c2926;
   color: #eee;
-}
+} */
 
 /* Contenedor que envuelve SearchInput y Filters */
 .products-toolbar {
