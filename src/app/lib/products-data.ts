@@ -272,6 +272,8 @@ export async function fetchFilteredProducts({
       size: row.size,
       color: row.color,
       keywords: row.keywords || [],
+      available: row.is_available,
+      category_id: row.category_id,
     }));
   } catch (error) {
     console.error('Error al filtrar productos:', error);

@@ -9,7 +9,7 @@ import SearchInput from "../ui/search";
 import { Category, fetchCategories } from "../lib/category-data";
 /* import Footer from "../navigation/footer"; */
 
-const products = await fetchProducts();
+// const products = await fetchProducts();
 const categories: Category[] = await fetchCategories();
 
 const productsMock = [
