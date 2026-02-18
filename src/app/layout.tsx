@@ -87,7 +87,7 @@ export default async function RootLayout({
           <form
             action={async () => {
               'use server';
-              await signOut();
+              await signOut({ redirectTo: '/login' });
             }}
           >
             <button className="btn btn-outline">Sign out</button>
