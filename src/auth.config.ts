@@ -3,38 +3,41 @@ import type { NextAuthConfig } from 'next-auth';
 
 export const authConfig = {
   pages: {
-    signIn: '/login', // Tu página de login personalizada
+    signIn: '/login',
   },
   callbacks: {
     authorized({ auth, request: { nextUrl } }) {
       const isLoggedIn = !!auth?.user;
-      const userRole = auth?.user?.role; // Asumiendo que agregaste 'role' a la sesión
+      const userRole = auth?.user?.role;
 
-      // 1. Definimos las rutas protegidas para Clientes y No Autenticados
-      const protectedPaths = ['/mystories', '/products', '/profile'];
-      
-      const isPathProtected = protectedPaths.some((path) => 
+      // 1. Definimos las rutas que requieren sesión obligatoria
+      const isDetailsPage = nextUrl.pathname.startsWith('/catalog/'); // Solo protege si hay algo después de /catalog/
+      const isManagementPath = ['/mystories', '/products', '/profile'].some((path) => 
         nextUrl.pathname.startsWith(path)
       );
 
       // LÓGICA DE PROTECCIÓN:
-      
-      // Si la ruta está protegida...
-      if (isPathProtected) {
-        // Si no ha iniciado sesión, bloquear (redirige a login)
-        if (!isLoggedIn) return false;
 
-        // Si es 'cliente', bloquear el acceso a estas rutas
-        // (En tu lógica: Clientes NO pueden entrar a estas 3 rutas)
-        if (userRole === 'cliente') return false;
-        
-        // Si es 'artesano', puede pasar a cualquier lado
-        if (userRole === 'artesano') return true;
+      // CASO A: Intentando entrar a los detalles del producto (/catalog/[id])
+      if (isDetailsPage) {
+        if (!isLoggedIn) return false; // Si no hay sesión, al login
+        return true; // Si está logueado (sea cliente o artesano), puede ver detalles
       }
 
-      // Para cualquier otra ruta o si es artesano en ruta protegida, permitir
+      // CASO B: Intentando entrar a gestión (Historias, Productos, Perfil)
+      if (isManagementPath) {
+        if (!isLoggedIn) return false;
+        
+        // Solo artesanos entran aquí
+        if (userRole === 'artesano') return true;
+        
+        // Si es cliente, bloqueamos el acceso
+        return false; 
+      }
+
+      // El catálogo general (/catalog) y lo demás es público
       return true;
     },
   },
-  providers: [], // Los providers van en auth.ts para evitar problemas de Edge Runtime
+  providers: [],
 } satisfies NextAuthConfig;
